@@ -1,0 +1,6 @@
+@ElevaniPaymentGateway.PaymentAPI_HostAddress = http://localhost:5049
+
+GET {{ElevaniPaymentGateway.PaymentAPI_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
