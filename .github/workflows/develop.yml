@@ -28,7 +28,7 @@ jobs:
           with:
             host: ${{ secrets.DEV_VPS_IP }}
             username: ${{ secrets.DEV_VPS_USER }}
-            key: ${{ secrets.DEV_VPS_KEY}}
+            key: ${{ secrets.DEV_VPS_KEY }}
             script: |
               docker image prune --all
               docker stop elevani_trans_dev_api || true
@@ -61,7 +61,7 @@ jobs:
           with:
             host: ${{ secrets.DEV_VPS_IP }}
             username: ${{ secrets.DEV_VPS_USER }}
-            key: ${{ secrets.DEV_VPS_KEY}}
+            key: ${{ secrets.DEV_VPS_KEY }}
             script: |
               docker image prune --all
               docker stop elevani_admin_dev_api || true
@@ -94,7 +94,7 @@ jobs:
           with:
             host: ${{ secrets.DEV_VPS_IP }}
             username: ${{ secrets.DEV_VPS_USER }}
-            key: ${{ secrets.DEV_VPS_KEY}}
+            key: ${{ secrets.DEV_VPS_KEY }}
             script: |
               docker image prune --all
               docker stop elevani_trans_dev_jobs || true
