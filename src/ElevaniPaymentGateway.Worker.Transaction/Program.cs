@@ -42,6 +42,13 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+app.UseSwagger();
+
+app.UseSwaggerUI(c =>
+{
+    c.DefaultModelsExpandDepth(-1);
+});
+
 app.UseHttpsRedirection();
 
 app.UseAuthorization();
