@@ -75,7 +75,7 @@ app.UseMiddleware<GlobalExceptionMiddleware>();
 
 app.UseMiddleware<IPAddressWhitelistMiddleware>();
 
-//app.UseMiddleware<AESEncryptionMiddleware>();
+app.UseMiddleware<AESEncryptionMiddleware>();
 
 app.MapControllers();
 
