@@ -29,7 +29,7 @@ namespace ElevaniPaymentGateway.Infrastructure.Extensions
             services.AddSwaggerGen(c =>
             {
                 c.EnableAnnotations();
-                c.SwaggerDoc("v1", new OpenApiInfo { Title = "Elevani Merchant Services", Version = "v1" });
+                c.SwaggerDoc("v1", new OpenApiInfo { Title = "Elevani Admin Services", Version = "v1" });
                 c.SchemaFilter<EnumSchemaFilter>();
                 var securityScheme = new OpenApiSecurityScheme
                 {
