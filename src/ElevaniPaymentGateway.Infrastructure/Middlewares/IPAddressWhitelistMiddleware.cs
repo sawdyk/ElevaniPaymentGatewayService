@@ -48,8 +48,8 @@ namespace ElevaniPaymentGateway.Infrastructure.Middlewares
                     _logger.LogError($"IP aadress {remoteIp} is not a whitelisted IP address to call the service");
                     return;
                 }
-
-                await next(context);
+                else
+                    await next(context);
             }
             catch (Exception ex)
             {

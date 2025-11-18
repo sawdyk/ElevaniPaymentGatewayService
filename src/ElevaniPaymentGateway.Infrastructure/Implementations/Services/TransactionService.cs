@@ -3,13 +3,12 @@ using ElevaniPaymentGateway.Core.Constants;
 using ElevaniPaymentGateway.Core.Entities;
 using ElevaniPaymentGateway.Core.Enums;
 using ElevaniPaymentGateway.Core.Exceptions;
-using ElevaniPaymentGateway.Core.Helpers;
 using ElevaniPaymentGateway.Core.Helpers.Pagination;
 using ElevaniPaymentGateway.Core.Models.Dto;
 using ElevaniPaymentGateway.Core.Models.Request.TransactionService;
 using ElevaniPaymentGateway.Core.Models.Response;
 using ElevaniPaymentGateway.Core.Models.Response.TransactionService;
-using ElevaniPaymentGateway.Infrastructure.Interfaces.EfRepository;
+using ElevaniPaymentGateway.Infrastructure.Helpers;
 using ElevaniPaymentGateway.Infrastructure.Interfaces.Queries;
 using ElevaniPaymentGateway.Infrastructure.Interfaces.Services;
 using ElevaniPaymentGateway.Infrastructure.Interfaces.Services.Helpers;
@@ -27,8 +26,9 @@ namespace ElevaniPaymentGateway.Infrastructure.Implementations.Services
         private readonly IGratipPaymentService _gratipPaymentService;
         private MerchantContextDto _merchantContext;
         private readonly IPaymentHttpContextHelperService _paymentHttpContextHelperService;
+        private readonly ValidationHelper _validationHelper;
         public TransactionService(ILogger<TransactionService> logger, ITransactionQuery transactionQuery, IMapper mapper, 
-            IGratipPaymentService gratipPaymentService, IPaymentHttpContextHelperService paymentHttpContextHelperService)
+            IGratipPaymentService gratipPaymentService, IPaymentHttpContextHelperService paymentHttpContextHelperService, ValidationHelper validationHelper)
         {
             _logger = logger;
             _transactionQuery = transactionQuery;
@@ -36,30 +36,40 @@ namespace ElevaniPaymentGateway.Infrastructure.Implementations.Services
             _gratipPaymentService = gratipPaymentService;
             _paymentHttpContextHelperService = paymentHttpContextHelperService;
             _merchantContext = _paymentHttpContextHelperService.MerchantContext();
+            _validationHelper = validationHelper;
         }
 
         public async Task<GenericResponse<TransactionResponse>> InitiateTransactionViaPaymentGatewayAsync(TransactionRequest request)
         {
             try
             {
+                _validationHelper.ValidateRequest(request);
                 TransactionResponse initiatePaymentResponse = new TransactionResponse();
-                string reference = RandomGeneratorHelper.GenerateTransactionReference(_merchantContext.Slug, request.Currency, request.Amount.ToString());
+
+                var merhantSlug = request.Reference.Substring(0, 3);
+                if(!_merchantContext.Slug.Equals(merhantSlug))
+                    throw new GenericException("Invalid transaction reference format");
+
+                var existingReference = await _transactionQuery.GetByAsync(x => x.Reference == request.Reference);
+                if (existingReference is not null)
+                    throw new GenericException("Duplicate transaction reference");
+                //string reference = RandomGeneratorHelper.GenerateTransactionReference(_merchantContext.Slug, request.Currency, request.Amount.ToString());
 
                 switch (_merchantContext.PaymentGateway)
                 {
                     case nameof(PaymentGateways.GRATIP):
-                        initiatePaymentResponse = await _gratipPaymentService.InitiateTransactionAsync(_merchantContext.MerchantId, reference, request);
+                        initiatePaymentResponse = await _gratipPaymentService.InitiateTransactionAsync(_merchantContext.MerchantId, request);
                         break;
 
                     default:
                         break;
                 }
 
-
                 return GenericResponse<TransactionResponse>.Success(initiatePaymentResponse);
             }
             catch (Exception ex)
-            when (ex is NotFoundException || ex is GenericException)
+            when (ex is NotFoundException || ex is GenericException
+            || ex is DataValidationException)
             {
                 throw;
             }

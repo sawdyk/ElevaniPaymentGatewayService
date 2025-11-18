@@ -7,6 +7,6 @@ namespace ElevaniPaymentGateway.Infrastructure.Interfaces.Services
 {
     public interface ITransactionLoggerService : IAutoDependencyServices
     {
-        Task<Transaction> LogTransactionAsync(string merchantId, string reference, PaymentGateways paymentGateway, TransactionRequest request);
+        Task<Transaction> LogTransactionAsync(string merchantId, PaymentGateways paymentGateway, TransactionRequest request);
     }
 }

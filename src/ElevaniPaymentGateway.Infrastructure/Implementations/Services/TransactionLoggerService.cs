@@ -19,13 +19,13 @@ namespace ElevaniPaymentGateway.Infrastructure.Implementations.Services
             _transactionRepository = transactionRepository;
         }
 
-        public async Task<Transaction> LogTransactionAsync(string merchantId, string reference, PaymentGateways paymentGateway, TransactionRequest request)
+        public async Task<Transaction> LogTransactionAsync(string merchantId, PaymentGateways paymentGateway, TransactionRequest request)
         {
             try
             {
                 var transaction = new Transaction();
                 transaction.MerchantId = merchantId;
-                transaction.Reference = reference;
+                transaction.Reference = request.Reference;
                 transaction.Currency = request.Currency;
                 transaction.Amount = request.Amount;
                 transaction.CountryCode = request.CountryCode;

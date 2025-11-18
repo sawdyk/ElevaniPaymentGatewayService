@@ -19,7 +19,7 @@ namespace ElevaniPaymentGateway.PaymentAPI.Controllers
         }
 
         [HttpPost("token")]
-        [SwaggerOperation("Generate a new token for authentication. Token expires after 30 days")]
+        [SwaggerOperation("Generate a new token for authentication. Token expires after 24hrs")]
         [SwaggerResponse(StatusCodes.Status200OK, "Success", typeof(GenericResponse<JwtResponse>))]
         [SwaggerResponse(StatusCodes.Status400BadRequest, "Failed", typeof(ProblemDetails))]
         [SwaggerResponse(StatusCodes.Status500InternalServerError, "Internal server error", typeof(ProblemDetails))]

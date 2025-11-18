@@ -11,6 +11,7 @@ namespace ElevaniPaymentGateway.Core.Models.Response.TransactionService
         public string Currency { get; set; }
         public string CountryCode { get; set; }
         public string Status { get; set; }
+        public string Description { get; set; }
         public DateTime? CreatedAt { get; set; }
     }
 }

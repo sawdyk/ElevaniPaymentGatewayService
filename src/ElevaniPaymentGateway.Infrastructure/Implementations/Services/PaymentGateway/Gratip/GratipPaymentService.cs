@@ -1,11 +1,9 @@
 ﻿using ElevaniPaymentGateway.Core.Constants;
-using ElevaniPaymentGateway.Core.Entities;
 using ElevaniPaymentGateway.Core.Enums;
 using ElevaniPaymentGateway.Core.Exceptions;
 using ElevaniPaymentGateway.Core.Models.Request.Gratip;
 using ElevaniPaymentGateway.Core.Models.Request.TransactionService;
 using ElevaniPaymentGateway.Core.Models.Response.TransactionService;
-using ElevaniPaymentGateway.Infrastructure.Interfaces.EfRepository;
 using ElevaniPaymentGateway.Infrastructure.Interfaces.ProxyClients.Gratip;
 using ElevaniPaymentGateway.Infrastructure.Interfaces.Services;
 using ElevaniPaymentGateway.Infrastructure.Interfaces.Services.PaymentGateway.Gratip;
@@ -20,31 +18,28 @@ namespace ElevaniPaymentGateway.Infrastructure.Implementations.Services.PaymentG
         private readonly IGratipCollectionService _gratipCollectionService;
         private readonly IGratipTransactionService _gratipTransactionService;
         private readonly ISqlTransactionService _sqlTransactionService;
-        private readonly IBaseRepository<Transaction> _transactionRepository;
         private readonly ITransactionLoggerService _transactionLoggerService;
         public GratipPaymentService(ILogger<GratipPaymentService> logger,
            IGratipCollectionService gratipCollectionService, IGratipTransactionService gratipTransactionService,
-           ISqlTransactionService sqlTransactionService, IBaseRepository<Transaction> transactionRepository, 
-           ITransactionLoggerService transactionLoggerService)
+           ISqlTransactionService sqlTransactionService, ITransactionLoggerService transactionLoggerService)
         {
             _logger = logger;
             _gratipCollectionService = gratipCollectionService;
             _gratipTransactionService = gratipTransactionService;
             _sqlTransactionService = sqlTransactionService;
-            _transactionRepository = transactionRepository;
             _transactionLoggerService = transactionLoggerService;
         }
 
-        public async Task<TransactionResponse> InitiateTransactionAsync(string merchantId, string reference, TransactionRequest request)
+        public async Task<TransactionResponse> InitiateTransactionAsync(string merchantId, TransactionRequest request)
         {
             try
             {
                 InitiateTransactionRequest initiateTransactionRequest = new InitiateTransactionRequest();
                 initiateTransactionRequest.amount = request.Amount;
-                initiateTransactionRequest.currency = request.Currency;
+                initiateTransactionRequest.currency = request.Currency.ToUpper();
                 initiateTransactionRequest.method = "Card Pay"; // Payment method (Google Pay, Apple Pay, Card Pay)
-                initiateTransactionRequest.countryCode = request.CountryCode;
-                initiateTransactionRequest.external_reference = reference;
+                initiateTransactionRequest.countryCode = request.CountryCode.ToUpper();
+                initiateTransactionRequest.external_reference = request.Reference;
                 initiateTransactionRequest.description = request.Description; //narration
                 initiateTransactionRequest.customer_info = new Customer_Info
                 {
@@ -59,7 +54,7 @@ namespace ElevaniPaymentGateway.Infrastructure.Implementations.Services.PaymentG
 
                 var sqlTransaction = await _sqlTransactionService.BeginTransactionAsync();
 
-                var transaction = await _transactionLoggerService.LogTransactionAsync(merchantId, reference, PaymentGateways.GRATIP, request);
+                var transaction = await _transactionLoggerService.LogTransactionAsync(merchantId, PaymentGateways.GRATIP, request);
                 await _gratipTransactionService.LogGratipTransactionsAsync(transaction.Id, initiateTransactionRequest, initiateTransactionResponse);
 
                 await _sqlTransactionService.CommitAndDisposeTransactionAsync(sqlTransaction);
@@ -69,11 +64,12 @@ namespace ElevaniPaymentGateway.Infrastructure.Implementations.Services.PaymentG
                 return new TransactionResponse
                 {
                     MerchantID = merchantId,
-                    TransactionReference = reference,
+                    TransactionReference = request.Reference,
                     PaymentUrl = initiateTransactionResponse.data.payment_url,
                     Amount = initiateTransactionResponse.data.amount,
                     Currency = initiateTransactionResponse.data.currency,
                     CountryCode = initiateTransactionRequest.countryCode,
+                    Description = initiateTransactionRequest.description,
                     Status = initiateTransactionResponse.data.status,
                     CreatedAt = initiateTransactionResponse.data.created_at,
                 };

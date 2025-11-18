@@ -1,3 +1,4 @@
+using AspNetCoreRateLimit;
 using ElevaniPaymentGateway.Infrastructure.Extensions;
 using ElevaniPaymentGateway.Infrastructure.Middlewares;
 using Newtonsoft.Json.Serialization;
@@ -63,17 +64,19 @@ app.UseSwaggerUI(c =>
     c.DefaultModelsExpandDepth(-1);
 });
 
+app.UseIpRateLimiting();
+
 app.UseHttpsRedirection();
 
 app.UseAuthentication();
 
 app.UseAuthorization();
 
+app.UseMiddleware<IPAddressWhitelistMiddleware>();
+
 app.UseMiddleware<ResponseHeaderMiddleware>();
 
 app.UseMiddleware<GlobalExceptionMiddleware>();
-
-app.UseMiddleware<IPAddressWhitelistMiddleware>();
 
 app.UseMiddleware<AESEncryptionMiddleware>();
 
