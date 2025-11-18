@@ -28,7 +28,9 @@ namespace ElevaniPaymentGateway.Infrastructure.Middlewares
                     .Select(x => x.IPAddress)
                     .ToListAsync();
 
-                var remoteIp = context.Connection.RemoteIpAddress?.ToString();
+                var remoteIp = context.Connection.RemoteIpAddress.MapToIPv4().ToString();
+                if (remoteIp.Contains("::ffff:"))
+                    remoteIp = remoteIp.Replace("::ffff:", "");
 
                 if (!_whitelist.Contains(remoteIp))
                 {
@@ -36,14 +38,14 @@ namespace ElevaniPaymentGateway.Infrastructure.Middlewares
                     problemDetails.Status = StatusCodes.Status403Forbidden;
                     problemDetails.Type = "Forbidden";
                     problemDetails.Title = "Forbidden";
-                    problemDetails.Detail = $"{remoteIp} is not a whitelisted IP address to call this service";
+                    problemDetails.Detail = $"Unauthorized access to call this service";
 
                     string json = JsonSerializer.Serialize(problemDetails);
                     context.Response.ContentType = "application/json";
                     context.Response.StatusCode = StatusCodes.Status403Forbidden;
                     await context.Response.WriteAsync(json);
 
-                    _logger.LogError($"IP aadress {remoteIp} is not whitelisted");
+                    _logger.LogError($"IP aadress {remoteIp} is not a whitelisted IP address to call the service");
                     return;
                 }
 
