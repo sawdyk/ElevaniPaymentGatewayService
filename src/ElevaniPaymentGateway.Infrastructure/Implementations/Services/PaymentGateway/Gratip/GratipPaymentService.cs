@@ -41,12 +41,12 @@ namespace ElevaniPaymentGateway.Infrastructure.Implementations.Services.PaymentG
                 initiateTransactionRequest.countryCode = request.CountryCode.ToUpper();
                 initiateTransactionRequest.external_reference = request.Reference;
                 initiateTransactionRequest.description = request.Description; //narration
-                initiateTransactionRequest.customer_info = new Customer_Info
-                {
-                    firstName = request.CustomerFirstName,
-                    lastName = request.CustomerLastName,
-                    email = request.CustomerEmail,
-                };
+                //initiateTransactionRequest.customer_info = new Customer_Info
+                //{
+                //    firstName = request.CustomerFirstName,
+                //    lastName = request.CustomerLastName,
+                //    email = request.CustomerEmail,
+                //};
 
                 var initiateTransactionResponse = await _gratipCollectionService.InitiateTransactionAsync(initiateTransactionRequest);
                 if (initiateTransactionResponse is null) throw new GenericException(RespMsgConstants.TransactionInitiationError);

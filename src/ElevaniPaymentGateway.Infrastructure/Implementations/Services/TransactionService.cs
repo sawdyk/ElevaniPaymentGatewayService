@@ -48,11 +48,11 @@ namespace ElevaniPaymentGateway.Infrastructure.Implementations.Services
 
                 var merhantSlug = request.Reference.Substring(0, 3);
                 if(!_merchantContext.Slug.Equals(merhantSlug))
-                    throw new GenericException("Invalid transaction reference format");
+                    throw new GenericException("Invalid reference format");
 
                 var existingReference = await _transactionQuery.GetByAsync(x => x.Reference == request.Reference);
                 if (existingReference is not null)
-                    throw new GenericException("Duplicate transaction reference");
+                    throw new GenericException("Duplicate reference");
                 //string reference = RandomGeneratorHelper.GenerateTransactionReference(_merchantContext.Slug, request.Currency, request.Amount.ToString());
 
                 switch (_merchantContext.PaymentGateway)
