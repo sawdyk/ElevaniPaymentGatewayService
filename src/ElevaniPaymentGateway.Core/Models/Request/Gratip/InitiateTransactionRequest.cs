@@ -9,7 +9,7 @@
         public string external_reference { get; set; } // Optional: Your internal reference (auto-generated if not provided)
         public string? description { get; set; } // Optional: Payment description (max 500 chars)
         //public string? merchant_id { get; set; } // Optional: Merchant identifier for tracking (max 100 chars)
-        public Customer_Info? customer_info { get; set; } // Optional: Customer information
+        //public Customer_Info? customer_info { get; set; } // Optional: Customer information
     }
     public class Customer_Info
     {

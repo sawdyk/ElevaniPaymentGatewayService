@@ -37,9 +37,9 @@ namespace ElevaniPaymentGateway.Infrastructure.Implementations.Services.PaymentG
                     CollectionId = response.data.collection_id.ToString(),
                     TransactionReference = response.data.transaction_reference,
                     RequestReference = response.data.request_reference,
-                    CustomerFirstName = request.customer_info is null ? "" : request.customer_info.firstName,
-                    CustomerLastName = request.customer_info is null ? "" : request.customer_info.lastName,
-                    CustomerEmail = request.customer_info is null ? "" : request.customer_info.email,
+                    //CustomerFirstName = request.customer_info is null ? "" : request.customer_info.firstName,
+                    //CustomerLastName = request.customer_info is null ? "" : request.customer_info.lastName,
+                    //CustomerEmail = request.customer_info is null ? "" : request.customer_info.email,
                 });
 
                 await _gratipTransactionRepository.SaveChangesAsync();
