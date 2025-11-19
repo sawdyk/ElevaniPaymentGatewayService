@@ -19,19 +19,31 @@ namespace ElevaniPaymentGateway.Infrastructure.Helpers
             var errors = new StringBuilder();
 
             if (request.Amount <= 0)
-                errors.AppendLine($"{nameof(request.Amount)} is invalid");
+                throw new DataValidationException($"Invalid {nameof(request.Amount)}");
 
             if (string.IsNullOrEmpty(request.Currency))
-                errors.AppendLine($"{nameof(request.Currency)} cannot be null or empty");
+                throw new DataValidationException($"{nameof(request.Currency)} cannot be null or empty");
+
+            if (string.IsNullOrEmpty(request.CountryCode))
+                throw new DataValidationException($"{nameof(request.CountryCode)} cannot be null or empty");
 
             if (string.IsNullOrEmpty(request.Reference))
-                errors.AppendLine($"{nameof(request.Reference)} cannot be null or empty");
+                throw new DataValidationException($"{nameof(request.Reference)} cannot be null or empty");
+
+            if (request.CountryCode.Length > 2)
+                throw new DataValidationException($"Invalid {nameof(request.CountryCode)}");
+        
+            if (request.Reference.Length > 30)
+                throw new DataValidationException($"{nameof(request.Reference)} cannot be more than 30 characters");
+
+            if (request.Reference.Any(ch => !char.IsLetterOrDigit(ch)))
+                throw new DataValidationException($"{nameof(request.Reference)} contains special characters");
+
+            if (request.Description.Length > 500)
+                throw new DataValidationException($"{nameof(request.Description)} is exceeded maximum characters");
 
             if (!validCurrencies.Contains(request.Currency))
-                errors.AppendLine($"Invalid {nameof(request.Currency)}");
-
-            if(errors.Length > 0)
-                throw new DataValidationException(errors.ToString(), errors);
+                throw new DataValidationException($"Invalid {nameof(request.Currency)}");
         }
     }
 }

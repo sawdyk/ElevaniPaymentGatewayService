@@ -45,6 +45,11 @@ namespace ElevaniPaymentGateway.Infrastructure.Implementations.Services
                 return GenericResponse<JwtResponse>.Success(jwtResponse);
             }
             catch (Exception ex)
+            when (ex is GenericException || ex is NotFoundException)
+            {
+                throw;
+            }
+            catch (Exception ex)
             {
                 _logger.LogError($"An error occured >> {ex.Message} | stack trace >> {ex.StackTrace} " +
                    $"| inner exception >> {ex.InnerException} | source >> {ex.Source}");
@@ -71,6 +76,11 @@ namespace ElevaniPaymentGateway.Infrastructure.Implementations.Services
                 await _merchantCredentialRepository.SaveChangesAsync();
 
                 return GenericResponse<MerchantCredential>.Success(merchantCredential);
+            }
+            catch (Exception ex)
+            when (ex is GenericException || ex is NotFoundException)
+            {
+                throw;
             }
             catch (Exception ex)
             {
