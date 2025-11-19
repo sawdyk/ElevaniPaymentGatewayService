@@ -30,10 +30,10 @@ namespace ElevaniPaymentGateway.Infrastructure.Implementations.Services
                 transaction.Amount = request.Amount;
                 transaction.CountryCode = request.CountryCode;
                 transaction.Narration = request.Description;
-                transaction.CustomerFirstName = request.CustomerFirstName;
-                transaction.CustomerLastName = request.CustomerLastName;
-                transaction.CustomerEmail = request.CustomerEmail;
-                transaction.CustomerPhoneNumber = request.CustomerPhoneNumber;
+                //transaction.CustomerFirstName = request.CustomerFirstName;
+                //transaction.CustomerLastName = request.CustomerLastName;
+                //transaction.CustomerEmail = request.CustomerEmail;
+                //transaction.CustomerPhoneNumber = request.CustomerPhoneNumber;
                 transaction.PaymentGateway = paymentGateway;
                 transaction.CreatedBy = "System";
 
