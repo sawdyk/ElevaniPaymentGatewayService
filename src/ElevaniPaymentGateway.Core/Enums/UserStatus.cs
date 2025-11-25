@@ -7,9 +7,9 @@ namespace ElevaniPaymentGateway.Core.Enums
     [JsonConverter(typeof(StringEnumConverter))]
     public enum UserStatus
     {
-        [Display(Description = "InActive")]
-        Active = 0,
         [Display(Description = "Active")]
-        Inactive = 1,
+        Active = 0,
+        [Display(Description = "InActive")]
+        InActive = 1,
     }
 }

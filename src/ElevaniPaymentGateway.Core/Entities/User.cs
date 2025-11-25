@@ -10,7 +10,7 @@ namespace ElevaniPaymentGateway.Core.Entities
         public string LastName { get; set; }
         public string? MiddleName { get; set; }
         public DateTime DateOfBirth { get; set; }
-        public UserStatus Status { get; set; } = UserStatus.Inactive;
+        public UserStatus Status { get; set; } = UserStatus.InActive;
         [JsonIgnore]
         public override string? PasswordHash { get => base.PasswordHash; set => base.PasswordHash = value; }
         public DateTime? LastLoginDate { get; set; }

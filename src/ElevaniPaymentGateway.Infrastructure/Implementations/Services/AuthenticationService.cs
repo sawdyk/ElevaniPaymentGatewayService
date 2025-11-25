@@ -57,7 +57,7 @@ namespace ElevaniPaymentGateway.Infrastructure.Implementations.Services
                 var user = await _userManager.FindByEmailAsync(request.EmailAddress);
                 if (user is null) throw new NotFoundException(RespMsgConstants.InvalidUsernamePassword);
 
-                if (user.Status == UserStatus.Inactive) throw new GenericException(RespMsgConstants.InActiveUser);
+                if (user.Status == UserStatus.InActive) throw new GenericException(RespMsgConstants.InActiveUser);
                 if (user.EmailConfirmed is false) throw new GenericException(RespMsgConstants.EmailConfirmationError);
 
                 var signIn = await _signInManager.PasswordSignInAsync(user, request.Password, false, true);
@@ -141,7 +141,7 @@ namespace ElevaniPaymentGateway.Infrastructure.Implementations.Services
                 var user = await _userManager.FindByEmailAsync(request.EmailAddress);
                 if (user is null) throw new NotFoundException(RespMsgConstants.InvalidUsernamePassword);
 
-                if (user.Status == UserStatus.Inactive) throw new GenericException(RespMsgConstants.InActiveUser);
+                if (user.Status == UserStatus.InActive) throw new GenericException(RespMsgConstants.InActiveUser);
                 if (user.EmailConfirmed is false) throw new GenericException(RespMsgConstants.EmailConfirmationError);
 
                 var signIn = await _signInManager.PasswordSignInAsync(user, request.Password, false, true);

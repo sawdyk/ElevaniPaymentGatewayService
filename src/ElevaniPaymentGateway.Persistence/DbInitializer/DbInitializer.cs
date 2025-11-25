@@ -54,7 +54,6 @@ namespace ElevaniPaymentGateway.Persistence.DbInitializer
                     var result = await roleManager.CreateAsync(role);
                     if (!result.Succeeded) throw new GenericException("An error occurred while trying to seed application roles");
                 }
-
             }
         }
 

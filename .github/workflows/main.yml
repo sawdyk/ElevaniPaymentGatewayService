@@ -5,8 +5,8 @@ on:
     branches: [ "master" ]
 
 jobs:
-    api:
-        name: deploy-api
+    transaction-api:
+        name: deploy-transaction-api
         runs-on: ubuntu-latest
         steps:
         - uses: actions/checkout@v3
@@ -14,23 +14,21 @@ jobs:
         - name: App Settings Variable Substitution
           uses: microsoft/variable-substitution@v1
           with:
-            files: 'src/KlikSave.API/appsettings.json'
+            files: 'src/ElevaniPaymentGateway.API.Transaction/appsettings.json'
           env:
-              ConnectionStrings.KliksaveDbCon: ${{ secrets.PROD_DB_CONNECTION }} # uses the production database
+              ConnectionStrings.PGDatabaseCon: ${{ secrets.PROD_DB_CONNECTION }} # uses the production database
               AppSettingsConfig.IsAppLive: true
               JwtConfig.Key:  ${{ secrets.PROD_JWT_SECRETKEY }} # uses the production JWT secret key
-              #FlutterwaveConfig.SecretKey: ${{ secrets.PROD_FLUTTERWAVE_SECRETKEY }} # uses the production flutterwave secret key
-              PayStackConfig.SecretKey: ${{ secrets.PROD_PAYSTACK_SECRETKEY }} # uses the production PAYSTACK secret key
-              CoralPayConfig.BaseUrl: ${{ secrets.PROD_CORALPAY_BASEURL }} # uses the production CORAL PAY base url
-              CoralPayConfig.Username: ${{ secrets.PROD_CORALPAY_USERNAME }} # uses the production CORAL PAY username
-              CoralPayConfig.Password: ${{ secrets.PROD_CORALPAY_PASSWORD }} # uses the production CORAL PAY password
+              GratipConfig.BaseUrl: ${{ secrets.PROD_GRATIP_BASEURL }} # uses the production GRATIP base url
+              GratipConfig.APIKey: ${{ secrets.PROD_GRATIP_API_KEY }} # uses the production GRATIP API key
+              GratipConfig.APISecret: ${{ secrets.PROD_GRATIP_API_SECRET }} # uses the production GRATIP API Secret
               EncryptorConfig.IV: ${{ secrets.PROD_ENCRYPTION_IV }} # uses the production encryption IV
               EncryptorConfig.Key: ${{ secrets.PROD_ENCRYPTION_KEY }} # uses the production encryption KEY
-              AppSettingsConfig.EnableAPIEncryption: true # uses the production encryption KEY
+              AppSettingsConfig.EnableAPIEncryption: false # uses the production encryption KEY
     
         - name: Build the Docker image
           #working-directory: src/PrimeElectronics.API
-          run: docker build . -t sawdykdocker/kliksave_prod_api:latest -f docker/api/Dockerfile
+          run: docker build . -t sawdykdocker/elevani_trans_prod_api:latest -f docker/transaction-api/Dockerfile
 
         - name: Log into Docker Hub
           uses: docker/login-action@v2
@@ -39,7 +37,7 @@ jobs:
             password: ${{ secrets.DOCKERHUB_TOKEN }}
 
         - name: Push the image to Docker Hub
-          run: docker push sawdykdocker/kliksave_prod_api:latest
+          run: docker push sawdykdocker/elevani_trans_prod_api:latest
 
         - name: Pull the image to VM
           uses: appleboy/ssh-action@v1.0.0
@@ -49,15 +47,15 @@ jobs:
             key: ${{ secrets.PROD_VPS_KEY }}
             script: |
               docker image prune --all
-              docker stop kliksave_prod_api || true
-              docker rm kliksave_prod_api -f || true
-              docker rmi sawdykdocker/kliksave_prod_api -f || true
-              docker image pull sawdykdocker/kliksave_prod_api:latest
-              cd /home/ubuntu/KlikSaveApp/Backend/API
+              docker stop elevani_trans_prod_api || true
+              docker rm elevani_trans_prod_api -f || true
+              docker rmi sawdykdocker/elevani_trans_prod_api -f || true
+              docker image pull sawdykdocker/elevani_trans_prod_api:latest
+              cd /home/ubuntu/ElevaniApp/Backend/TransactionAPI
               docker compose up -d #run in detach mode
 
-    background-jobs:
-        name: backgroundjobs
+    admin-api:
+        name: deploy-admin-api
         runs-on: ubuntu-latest
         steps:
         - uses: actions/checkout@v3
@@ -65,23 +63,21 @@ jobs:
         - name: App Settings Variable Substitution
           uses: microsoft/variable-substitution@v1
           with:
-            files: 'src/KlikSave.Jobs/appsettings.json'
+            files: 'src/ElevaniPaymentGateway.API.Admin/appsettings.json'
           env:
-              ConnectionStrings.KliksaveDbCon: ${{ secrets.PROD_DB_CONNECTION }} # uses the production database
+              ConnectionStrings.PGDatabaseCon: ${{ secrets.PROD_DB_CONNECTION }} # uses the production database
               AppSettingsConfig.IsAppLive: true
               JwtConfig.Key:  ${{ secrets.PROD_JWT_SECRETKEY }} # uses the production JWT secret key
-              #FlutterwaveConfig.SecretKey: ${{ secrets.PROD_FLUTTERWAVE_SECRETKEY }} # uses the production flutterwave secret key
-              PayStackConfig.SecretKey: ${{ secrets.PROD_PAYSTACK_SECRETKEY }} # uses the production PAYSTACK secret key
-              CoralPayConfig.BaseUrl: ${{ secrets.PROD_CORALPAY_BASEURL }} # uses the production CORAL PAY base url
-              CoralPayConfig.Username: ${{ secrets.PROD_CORALPAY_USERNAME }} # uses the production CORAL PAY username
-              CoralPayConfig.Password: ${{ secrets.PROD_CORALPAY_PASSWORD }} # uses the production CORAL PAY password
+              GratipConfig.BaseUrl: ${{ secrets.PROD_GRATIP_BASEURL }} # uses the production GRATIP base url
+              GratipConfig.APIKey: ${{ secrets.PROD_GRATIP_API_KEY }} # uses the production GRATIP API key
+              GratipConfig.APISecret: ${{ secrets.PROD_GRATIP_API_SECRET }} # uses the production GRATIP API Secret
               EncryptorConfig.IV: ${{ secrets.PROD_ENCRYPTION_IV }} # uses the production encryption IV
               EncryptorConfig.Key: ${{ secrets.PROD_ENCRYPTION_KEY }} # uses the production encryption KEY
-              AppSettingsConfig.EnableAPIEncryption: true # uses the production encryption KEY
+              AppSettingsConfig.EnableAPIEncryption: false # uses the production encryption KEY
     
         - name: Build the Docker image
           #working-directory: src/PrimeElectronics.API
-          run: docker build . -t sawdykdocker/kliksave_prod_jobs:latest -f docker/jobs/Dockerfile
+          run: docker build . -t sawdykdocker/elevani_admin_prod_api:latest -f docker/admin-api/Dockerfile
 
         - name: Log into Docker Hub
           uses: docker/login-action@v2
@@ -90,7 +86,56 @@ jobs:
             password: ${{ secrets.DOCKERHUB_TOKEN }}
 
         - name: Push the image to Docker Hub
-          run: docker push sawdykdocker/kliksave_prod_jobs:latest
+          run: docker push sawdykdocker/elevani_admin_prod_api:latest
+
+        - name: Pull the image to VM
+          uses: appleboy/ssh-action@v1.0.0
+          with:
+            host: ${{ secrets.PROD_VPS_IP }}
+            username: ${{ secrets.PROD_VPS_USER }}
+            key: ${{ secrets.PROD_VPS_KEY }}
+            script: |
+              docker image prune --all
+              docker stop elevani_admin_prod_api || true
+              docker rm elevani_admin_prod_api -f || true
+              docker rmi sawdykdocker/elevani_admin_prod_api -f || true
+              docker image pull sawdykdocker/elevani_admin_prod_api:latest
+              cd /home/ubuntu/ElevaniApp/Backend/AdminAPI
+              docker compose up -d #run in detach mode
+
+    background-jobs:
+        name: deploy-transaction-job
+        runs-on: ubuntu-latest
+        steps:
+        - uses: actions/checkout@v3
+  
+        - name: App Settings Variable Substitution
+          uses: microsoft/variable-substitution@v1
+          with:
+            files: 'src/ElevaniPaymentGateway.Worker.Transaction/appsettings.json'
+          env:
+              ConnectionStrings.PGDatabaseCon: ${{ secrets.PROD_DB_CONNECTION }} # uses the production database
+              AppSettingsConfig.IsAppLive: true
+              JwtConfig.Key:  ${{ secrets.PROD_JWT_SECRETKEY }} # uses the production JWT secret key
+              GratipConfig.BaseUrl: ${{ secrets.PROD_GRATIP_BASEURL }} # uses the production GRATIP base url
+              GratipConfig.APIKey: ${{ secrets.PROD_GRATIP_API_KEY }} # uses the production GRATIP API key
+              GratipConfig.APISecret: ${{ secrets.PROD_GRATIP_API_SECRET }} # uses the production GRATIP API Secret
+              EncryptorConfig.IV: ${{ secrets.PROD_ENCRYPTION_IV }} # uses the production encryption IV
+              EncryptorConfig.Key: ${{ secrets.PROD_ENCRYPTION_KEY }} # uses the production encryption KEY
+              AppSettingsConfig.EnableAPIEncryption: false # uses the production encryption KEY
+    
+        - name: Build the Docker image
+          #working-directory: src/PrimeElectronics.API
+          run: docker build . -t sawdykdocker/elevani_trans_prod_jobs:latest -f docker/transaction-job/Dockerfile
+
+        - name: Log into Docker Hub
+          uses: docker/login-action@v2
+          with:
+            username: ${{ secrets.DOCKERHUB_USERNAME }}
+            password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+        - name: Push the image to Docker Hub
+          run: docker push sawdykdocker/elevani_trans_prod_jobs:latest
 
         - name: Pull the image to VM
           uses: appleboy/ssh-action@v1.0.0
@@ -100,11 +145,11 @@ jobs:
             key: ${{ secrets.PROD_VPS_KEY}}
             script: |
               docker image prune --all
-              docker stop kliksave_prod_jobs || true
-              docker rm kliksave_prod_jobs -f || true
-              docker rmi sawdykdocker/kliksave_prod_jobs -f || true
-              docker image pull sawdykdocker/kliksave_prod_jobs:latest
-              cd /home/ubuntu/KlikSaveApp/Backend/Backgroundjob
+              docker stop elevani_trans_prod_jobs || true
+              docker rm elevani_trans_prod_jobs -f || true
+              docker rmi sawdykdocker/elevani_trans_prod_jobs -f || true
+              docker image pull sawdykdocker/elevani_trans_prod_jobs:latest
+              cd /home/ubuntu/ElevaniApp/Backend/TransactionJob
               docker compose up -d #run in detach mode
     
     
