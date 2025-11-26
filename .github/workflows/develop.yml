@@ -1,0 +1,106 @@
+name: Development Deployment
+
+on:
+  push:
+    branches: [ "develop" ]
+
+jobs:
+    transaction-api:
+        name: deploy-transaction-api
+        runs-on: ubuntu-latest
+        steps:
+        - uses: actions/checkout@v3       
+        - name: Build the Docker image
+          #working-directory: src/PrimeElectronics.API
+          run: docker build . -t sawdykdocker/elevani_trans_dev_api:latest -f docker/transaction-api/Dockerfile
+
+        - name: Log into Docker Hub
+          uses: docker/login-action@v2
+          with:
+            username: ${{ secrets.DOCKERHUB_USERNAME }}
+            password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+        - name: Push the image to Docker Hub
+          run: docker push sawdykdocker/elevani_trans_dev_api:latest
+
+        - name: Pull the image to VM
+          uses: appleboy/ssh-action@v1.0.0
+          with:
+            host: ${{ secrets.DEV_VPS_IP }}
+            username: ${{ secrets.DEV_VPS_USER }}
+            key: ${{ secrets.DEV_VPS_KEY }}
+            script: |
+              docker image prune --all
+              docker stop elevani_trans_dev_api || true
+              docker rm elevani_trans_dev_api -f || true
+              docker rmi sawdykdocker/elevani_trans_dev_api -f || true
+              docker image pull sawdykdocker/elevani_trans_dev_api:latest
+              cd /home/ubuntu/ElevaniApp/Backend/TransactionAPI
+              docker compose up -d #run in detach mode
+
+    admin-api:
+        name: deploy-admin-api
+        runs-on: ubuntu-latest
+        steps:
+        - uses: actions/checkout@v3       
+        - name: Build the Docker image
+          #working-directory: src/PrimeElectronics.API
+          run: docker build . -t sawdykdocker/elevani_admin_dev_api:latest -f docker/admin-api/Dockerfile
+
+        - name: Log into Docker Hub
+          uses: docker/login-action@v2
+          with:
+            username: ${{ secrets.DOCKERHUB_USERNAME }}
+            password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+        - name: Push the image to Docker Hub
+          run: docker push sawdykdocker/elevani_admin_dev_api:latest
+
+        - name: Pull the image to VM
+          uses: appleboy/ssh-action@v1.0.0
+          with:
+            host: ${{ secrets.DEV_VPS_IP }}
+            username: ${{ secrets.DEV_VPS_USER }}
+            key: ${{ secrets.DEV_VPS_KEY }}
+            script: |
+              docker image prune --all
+              docker stop elevani_admin_dev_api || true
+              docker rm elevani_admin_dev_api -f || true
+              docker rmi sawdykdocker/elevani_admin_dev_api -f || true
+              docker image pull sawdykdocker/elevani_admin_dev_api:latest
+              cd /home/ubuntu/ElevaniApp/Backend/AdminAPI
+              docker compose up -d #run in detach mode
+
+    background-jobs:
+        name: deploy-transaction-job
+        runs-on: ubuntu-latest
+        steps:
+        - uses: actions/checkout@v3      
+        - name: Build the Docker image
+          #working-directory: src/PrimeElectronics.API
+          run: docker build . -t sawdykdocker/elevani_trans_dev_jobs:latest -f docker/transaction-job/Dockerfile
+
+        - name: Log into Docker Hub
+          uses: docker/login-action@v2
+          with:
+            username: ${{ secrets.DOCKERHUB_USERNAME }}
+            password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+        - name: Push the image to Docker Hub
+          run: docker push sawdykdocker/elevani_trans_dev_jobs:latest
+
+        - name: Pull the image to VM
+          uses: appleboy/ssh-action@v1.0.0
+          with:
+            host: ${{ secrets.DEV_VPS_IP }}
+            username: ${{ secrets.DEV_VPS_USER }}
+            key: ${{ secrets.DEV_VPS_KEY }}
+            script: |
+              docker image prune --all
+              docker stop elevani_trans_dev_jobs || true
+              docker rm elevani_trans_dev_jobs -f || true
+              docker rmi sawdykdocker/elevani_trans_dev_jobs -f || true
+              docker image pull sawdykdocker/elevani_trans_dev_jobs:latest
+              cd /home/ubuntu/ElevaniApp/Backend/TransactionJob
+              docker compose up -d #run in detach mode
+    
