@@ -6,7 +6,6 @@ using ElevaniPaymentGateway.Core.Helpers;
 using ElevaniPaymentGateway.Core.Models.Dto;
 using ElevaniPaymentGateway.Core.Models.Request;
 using ElevaniPaymentGateway.Core.Models.Response;
-using ElevaniPaymentGateway.Infrastructure.Implementations.Queries;
 using ElevaniPaymentGateway.Infrastructure.Interfaces.EfRepository;
 using ElevaniPaymentGateway.Infrastructure.Interfaces.Queries;
 using ElevaniPaymentGateway.Infrastructure.Interfaces.Services;
@@ -45,7 +44,7 @@ namespace ElevaniPaymentGateway.Infrastructure.Implementations.Services
             try
             {
                 var merchantIPAdresses = await(await _merchantIPAddressQuery.ListAsync(x => x.MerchantId == request.MerchantId)).ToListAsync();
-                if(merchantIPAdresses.Count() == 2) throw new GenericException("Merchant can only whitelist 2 IP addresses");
+                if(merchantIPAdresses.Count() == 5) throw new GenericException("Merchant can only whitelist 5 IP addresses");
 
                 var merchantIPAddress = new MerchantIPAddress();
                 merchantIPAddress.MerchantId = request.MerchantId;
