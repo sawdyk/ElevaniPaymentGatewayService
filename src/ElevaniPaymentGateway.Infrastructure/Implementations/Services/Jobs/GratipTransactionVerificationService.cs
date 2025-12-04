@@ -57,64 +57,61 @@ namespace ElevaniPaymentGateway.Infrastructure.Implementations.Services.Jobs
                     .FinalizeTransactionAsync(new FinalizeTransactionRequest { transactionReference = gratipTransaction.TransactionReference });
                 if (finalizeTransactionResp is not null)
                 {
-                    if (finalizeTransactionResp.success is true)
+                    if (finalizeTransactionResp.data is not null)
                     {
-                        if (finalizeTransactionResp.data is not null)
+                        _logger.LogInformation($"tranaction reference {gratipTransaction.TransactionReference} " +
+                            $"| finalize data status => {finalizeTransactionResp.data.status}");
+
+                        if (finalizeTransactionResp.data.status.Equals("success"))
                         {
-                            _logger.LogInformation($"tranaction reference {gratipTransaction.TransactionReference} " +
-                                $"| finalize data status => {finalizeTransactionResp.data.status}");
+                            gratipTransaction.IsVerified = true;
+                            gratipTransaction.Status = TransactionStatus.Completed;
 
-                            if (finalizeTransactionResp.data.status.Equals("success"))
-                            {
-                                gratipTransaction.IsVerified = true;
-                                gratipTransaction.Status = TransactionStatus.Completed;
-
-                                //Update the main transaction table
-                                transaction.Status = TransactionStatus.Completed;
-                            }
-                            else
-                            {
-                                if (finalizeTransactionResp.data.status.Equals("failed") ||
-                                    finalizeTransactionResp.data.status.Equals("cancelled") || finalizeTransactionResp.data.status.Equals("declined"))
-                                {
-                                    gratipTransaction.IsVerified = false;
-                                    if (finalizeTransactionResp.data.status.Equals("cancelled"))
-                                        gratipTransaction.Status = TransactionStatus.Cancelled;
-                                    if (finalizeTransactionResp.data.status.Equals("declined"))
-                                        gratipTransaction.Status = TransactionStatus.Declined;
-                                    if (finalizeTransactionResp.data.status.Equals("failed"))
-                                        gratipTransaction.Status = TransactionStatus.Failed;
-
-                                    //Update the main transaction table
-                                    if (finalizeTransactionResp.data.status.Equals("cancelled"))
-                                        transaction.Status = TransactionStatus.Cancelled;
-                                    if (finalizeTransactionResp.data.status.Equals("declined"))
-                                        transaction.Status = TransactionStatus.Declined;
-                                    if (finalizeTransactionResp.data.status.Equals("failed"))
-                                        transaction.Status = TransactionStatus.Failed;
-                                }
-                            }
-
-                            gratipTransaction.UpdatedAt = DateTime.Now;
-                            gratipTransaction.DateVerified = DateTime.Now;
-                            gratipTransaction.UpdatedBy = "Job";
-
-                            var sqlTransaction = await _sqlTransactionService.BeginTransactionAsync();
-
-                            _gratipTransactionRepository.Update(gratipTransaction);
-                            await _gratipTransactionRepository.SaveChangesAsync();
-
-                            transaction.UpdatedAt = DateTime.Now;
-                            transaction.UpdatedBy = "Job";
-
-                            _transactionRepository.Update(transaction);
-                            await _transactionRepository.SaveChangesAsync();
-
-                            await _sqlTransactionService.CommitAndDisposeTransactionAsync(sqlTransaction);
+                            //Update the main transaction table
+                            transaction.Status = TransactionStatus.Completed;
                         }
                         else
-                            _logger.LogInformation($"Verification data => {JsonConvert.SerializeObject(finalizeTransactionResp.data)}");
+                        {
+                            if (finalizeTransactionResp.data.status.Equals("failed") ||
+                                finalizeTransactionResp.data.status.Equals("cancelled") || finalizeTransactionResp.data.status.Equals("declined"))
+                            {
+                                gratipTransaction.IsVerified = false;
+                                if (finalizeTransactionResp.data.status.Equals("cancelled"))
+                                    gratipTransaction.Status = TransactionStatus.Cancelled;
+                                if (finalizeTransactionResp.data.status.Equals("declined"))
+                                    gratipTransaction.Status = TransactionStatus.Declined;
+                                if (finalizeTransactionResp.data.status.Equals("failed"))
+                                    gratipTransaction.Status = TransactionStatus.Failed;
+
+                                //Update the main transaction table
+                                if (finalizeTransactionResp.data.status.Equals("cancelled"))
+                                    transaction.Status = TransactionStatus.Cancelled;
+                                if (finalizeTransactionResp.data.status.Equals("declined"))
+                                    transaction.Status = TransactionStatus.Declined;
+                                if (finalizeTransactionResp.data.status.Equals("failed"))
+                                    transaction.Status = TransactionStatus.Failed;
+                            }
+                        }
+
+                        gratipTransaction.UpdatedAt = DateTime.Now;
+                        gratipTransaction.DateVerified = DateTime.Now;
+                        gratipTransaction.UpdatedBy = "Job";
+
+                        var sqlTransaction = await _sqlTransactionService.BeginTransactionAsync();
+
+                        _gratipTransactionRepository.Update(gratipTransaction);
+                        await _gratipTransactionRepository.SaveChangesAsync();
+
+                        transaction.UpdatedAt = DateTime.Now;
+                        transaction.UpdatedBy = "Job";
+
+                        _transactionRepository.Update(transaction);
+                        await _transactionRepository.SaveChangesAsync();
+
+                        await _sqlTransactionService.CommitAndDisposeTransactionAsync(sqlTransaction);
                     }
+                    else
+                        _logger.LogInformation($"Verification data => {JsonConvert.SerializeObject(finalizeTransactionResp.data)}");
                 }
             }
         }
