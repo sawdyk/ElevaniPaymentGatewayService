@@ -38,7 +38,7 @@ namespace ElevaniPaymentGateway.Persistence.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
-                        .HasDefaultValue(new DateTime(2025, 11, 13, 17, 7, 14, 687, DateTimeKind.Local).AddTicks(7792));
+                        .HasDefaultValue(new DateTime(2025, 12, 15, 12, 35, 29, 732, DateTimeKind.Local).AddTicks(7444));
 
                     b.Property<string>("IPAddress")
                         .IsRequired()
@@ -353,7 +353,7 @@ namespace ElevaniPaymentGateway.Persistence.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
-                        .HasDefaultValue(new DateTime(2025, 11, 13, 17, 7, 14, 703, DateTimeKind.Local).AddTicks(2016));
+                        .HasDefaultValue(new DateTime(2025, 12, 15, 12, 35, 29, 755, DateTimeKind.Local).AddTicks(3676));
 
                     b.Property<string>("CreatedBy")
                         .HasColumnType("nvarchar(max)");
@@ -443,6 +443,9 @@ namespace ElevaniPaymentGateway.Persistence.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("MerchantId")
+                        .IsUnique();
+
                     b.HasIndex("MerchantId", "APIKey", "APISecret")
                         .IsUnique();
 
@@ -518,6 +521,65 @@ namespace ElevaniPaymentGateway.Persistence.Migrations
                     b.ToTable("MerchantUser");
                 });
 
+            modelBuilder.Entity("ElevaniPaymentGateway.Core.Entities.OTP", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("DateGenerated")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValue(new DateTime(2025, 12, 15, 12, 35, 29, 768, DateTimeKind.Local).AddTicks(5845));
+
+                    b.Property<DateTime?>("DateUsed")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("ExpiryDateTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsUsed")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
+
+                    b.Property<string>("OTPType")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("OTPValue")
+                        .IsRequired()
+                        .HasMaxLength(6)
+                        .HasColumnType("nvarchar(6)");
+
+                    b.Property<string>("TokenValue")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId", "OTPType")
+                        .IsUnique();
+
+                    b.ToTable("OTP");
+                });
+
             modelBuilder.Entity("ElevaniPaymentGateway.Core.Entities.Permissions", b =>
                 {
                     b.Property<Guid>("Id")
@@ -579,6 +641,9 @@ namespace ElevaniPaymentGateway.Persistence.Migrations
                     b.Property<string>("NormalizedName")
                         .HasMaxLength(256)
                         .HasColumnType("nvarchar(256)");
+
+                    b.Property<string>("RoleType")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("datetime2");
@@ -732,7 +797,7 @@ namespace ElevaniPaymentGateway.Persistence.Migrations
                     b.Property<DateTime>("DateOfBirth")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
-                        .HasDefaultValue(new DateTime(2025, 11, 13, 17, 7, 14, 719, DateTimeKind.Local).AddTicks(41));
+                        .HasDefaultValue(new DateTime(2025, 12, 15, 12, 35, 29, 771, DateTimeKind.Local).AddTicks(516));
 
                     b.Property<string>("Email")
                         .IsRequired()
@@ -803,7 +868,7 @@ namespace ElevaniPaymentGateway.Persistence.Migrations
                         .IsRequired()
                         .ValueGeneratedOnAdd()
                         .HasColumnType("nvarchar(max)")
-                        .HasDefaultValue("Inactive");
+                        .HasDefaultValue("InActive");
 
                     b.Property<bool>("TwoFactorEnabled")
                         .HasColumnType("bit");
@@ -985,8 +1050,8 @@ namespace ElevaniPaymentGateway.Persistence.Migrations
             modelBuilder.Entity("ElevaniPaymentGateway.Core.Entities.MerchantCredential", b =>
                 {
                     b.HasOne("ElevaniPaymentGateway.Core.Entities.Merchant", "Merchant")
-                        .WithMany()
-                        .HasForeignKey("MerchantId")
+                        .WithOne("MerchantCredential")
+                        .HasForeignKey("ElevaniPaymentGateway.Core.Entities.MerchantCredential", "MerchantId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -996,7 +1061,7 @@ namespace ElevaniPaymentGateway.Persistence.Migrations
             modelBuilder.Entity("ElevaniPaymentGateway.Core.Entities.MerchantIPAddress", b =>
                 {
                     b.HasOne("ElevaniPaymentGateway.Core.Entities.Merchant", "Merchant")
-                        .WithMany()
+                        .WithMany("MerchantIPAddresses")
                         .HasForeignKey("MerchantId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -1023,6 +1088,17 @@ namespace ElevaniPaymentGateway.Persistence.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("ElevaniPaymentGateway.Core.Entities.OTP", b =>
+                {
+                    b.HasOne("ElevaniPaymentGateway.Core.Entities.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("ElevaniPaymentGateway.Core.Entities.RolePermissions", b =>
                 {
                     b.HasOne("ElevaniPaymentGateway.Core.Entities.Permissions", "Permissions")
@@ -1045,7 +1121,7 @@ namespace ElevaniPaymentGateway.Persistence.Migrations
             modelBuilder.Entity("ElevaniPaymentGateway.Core.Entities.Transaction", b =>
                 {
                     b.HasOne("ElevaniPaymentGateway.Core.Entities.Merchant", "Merchant")
-                        .WithMany("Transactions")
+                        .WithMany()
                         .HasForeignKey("MerchantId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -1110,7 +1186,10 @@ namespace ElevaniPaymentGateway.Persistence.Migrations
 
             modelBuilder.Entity("ElevaniPaymentGateway.Core.Entities.Merchant", b =>
                 {
-                    b.Navigation("Transactions");
+                    b.Navigation("MerchantCredential")
+                        .IsRequired();
+
+                    b.Navigation("MerchantIPAddresses");
                 });
 
             modelBuilder.Entity("ElevaniPaymentGateway.Core.Entities.Permissions", b =>

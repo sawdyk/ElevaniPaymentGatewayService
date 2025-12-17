@@ -1,4 +1,5 @@
-﻿using ElevaniPaymentGateway.Core.Models.Dto;
+﻿using ElevaniPaymentGateway.Core.Entities;
+using ElevaniPaymentGateway.Core.Models.Dto;
 
 namespace ElevaniPaymentGateway.Core.Models.Response
 {
@@ -9,6 +10,15 @@ namespace ElevaniPaymentGateway.Core.Models.Response
         public string AccessToken { get; set; }
         public DateTime ExpiresIn { get; set; }
         public string RefreshToken { get; set; }
+    }
+
+    public class AdminUserLoginResponse : LoginResponse
+    {
+    }
+
+    public class MerchantUserLoginResponse : LoginResponse
+    {
+        public Merchant Merchant { get; set; }
     }
 
     //public class RolePermissionResponse

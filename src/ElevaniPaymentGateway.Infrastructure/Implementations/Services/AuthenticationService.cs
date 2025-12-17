@@ -8,6 +8,7 @@ using ElevaniPaymentGateway.Core.Models.Dto;
 using ElevaniPaymentGateway.Core.Models.Request;
 using ElevaniPaymentGateway.Core.Models.Response;
 using ElevaniPaymentGateway.Infrastructure.Interfaces.EfRepository;
+using ElevaniPaymentGateway.Infrastructure.Interfaces.Queries;
 using ElevaniPaymentGateway.Infrastructure.Interfaces.Services;
 using ElevaniPaymentGateway.Infrastructure.Interfaces.Services.Helpers;
 using ElevaniPaymentGateway.Infrastructure.Interfaces.Services.Utilities;
@@ -31,11 +32,13 @@ namespace ElevaniPaymentGateway.Infrastructure.Implementations.Services
         private readonly IActivityLoggerService _activityLoggerService;
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IdentityConfig _identityConfig;
+        private readonly IMerchantUserQuery _merchantUserQuery;
+        private readonly ILoginEmailService _loginEmailService;
         public AuthenticationService(IBaseRepository<User> userRepository,
             UserManager<User> userManager, RoleManager<Role> roleManager, SignInManager<User> signInManager,
             ILogger<AuthenticationService> logger, IJWTUtilityService jwtUtilityService, IMapper mapper, IOptions<JwtConfig> jwtConfig,
             IActivityLoggerService activityLoggerService, IHttpContextAccessor httpContextAccessor,
-            IOptions<IdentityConfig> identityConfig)
+            IOptions<IdentityConfig> identityConfig, IMerchantUserQuery merchantUserQuery, ILoginEmailService loginEmailService)
         {
             _userRepository = userRepository;
             _userManager = userManager;
@@ -48,9 +51,11 @@ namespace ElevaniPaymentGateway.Infrastructure.Implementations.Services
             _activityLoggerService = activityLoggerService;
             _httpContextAccessor = httpContextAccessor;
             _identityConfig = identityConfig.Value;
+            _merchantUserQuery = merchantUserQuery;
+            _loginEmailService = loginEmailService;
         }
 
-        public async Task<GenericResponse<LoginResponse>> AdminLoginAsync(LoginRequest request)
+        public async Task<GenericResponse<AdminUserLoginResponse>> AdminLoginAsync(LoginRequest request)
         {
             try
             {
@@ -69,7 +74,8 @@ namespace ElevaniPaymentGateway.Infrastructure.Implementations.Services
 
                 //var rolePermissions = new List<RolePermissionResponse>();
                 var role = await _roleManager.FindByNameAsync(userRoleName);
-                if (role.Name.Equals(nameof(UserRoles.Merchant))) throw new GenericException(RespMsgConstants.InvalidUsernamePassword);
+                if (role.Name.Equals(nameof(UserRoles.MerchantAdmin)) && role.Name.Equals(nameof(UserRoles.MerchantUser))) 
+                    throw new GenericException(RespMsgConstants.InvalidUsernamePassword);
 
                 //if (role != null)
                 //{
@@ -100,7 +106,7 @@ namespace ElevaniPaymentGateway.Infrastructure.Implementations.Services
                 _userRepository.Update(user);
                 await _userRepository.SaveChangesAsync();
 
-                LoginResponse loginResponse = new LoginResponse
+                AdminUserLoginResponse loginResponse = new AdminUserLoginResponse
                 {
                     AccessToken = accessToken.Token,
                     ExpiresIn = accessToken.ExpirationTime,
@@ -119,7 +125,9 @@ namespace ElevaniPaymentGateway.Infrastructure.Implementations.Services
                 });
                 _logger.LogInformation($"User {user.FirstName} logged in successfully on {DateTime.Now}");
 
-                return GenericResponse<LoginResponse>.Success(loginResponse, "Login successful");
+                //await _loginEmailService.SendLoginMailNotificationAsync(user);
+
+                return GenericResponse<AdminUserLoginResponse>.Success(loginResponse, "Login successful");
             }
             catch (Exception ex)
              when (ex is GenericException || ex is NotFoundException)
@@ -134,7 +142,7 @@ namespace ElevaniPaymentGateway.Infrastructure.Implementations.Services
             }
         }
 
-        public async Task<GenericResponse<LoginResponse>> MerchantLoginAsync(LoginRequest request)
+        public async Task<GenericResponse<MerchantUserLoginResponse>> MerchantLoginAsync(LoginRequest request)
         {
             try
             {
@@ -151,9 +159,15 @@ namespace ElevaniPaymentGateway.Infrastructure.Implementations.Services
                 var userRoleName = (await _userManager.GetRolesAsync(user)).FirstOrDefault();
                 if (string.IsNullOrEmpty(userRoleName)) throw new GenericException(RespMsgConstants.InvalidUsernamePassword);
 
+                Merchant? merchant = null;
+                var merchantUser = await _merchantUserQuery.GetByAsync(x => x.UserId == user.Id, true);
+                if(merchantUser is not null)
+                    merchant = merchantUser.Merchant;
+
                 //var rolePermissions = new List<RolePermissionResponse>();
                 var role = await _roleManager.FindByNameAsync(userRoleName);
-                if (!role.Name.Equals(nameof(UserRoles.Merchant))) throw new GenericException(RespMsgConstants.InvalidUsernamePassword);
+                if (!role.Name.Equals(nameof(UserRoles.MerchantAdmin)) && !role.Name.Equals(nameof(UserRoles.MerchantUser))) 
+                    throw new GenericException(RespMsgConstants.InvalidUsernamePassword);
 
                 //if (role != null)
                 //{
@@ -184,12 +198,13 @@ namespace ElevaniPaymentGateway.Infrastructure.Implementations.Services
                 _userRepository.Update(user);
                 await _userRepository.SaveChangesAsync();
 
-                LoginResponse loginResponse = new LoginResponse
+                MerchantUserLoginResponse loginResponse = new MerchantUserLoginResponse
                 {
                     AccessToken = accessToken.Token,
                     ExpiresIn = accessToken.ExpirationTime,
                     RefreshToken = refreshToken,
                     UserDetails = userDto,
+                    Merchant = merchant,
                     //RolePermissions = rolePermissions
                 };
 
@@ -203,7 +218,9 @@ namespace ElevaniPaymentGateway.Infrastructure.Implementations.Services
                 });
                 _logger.LogInformation($"User {user.FirstName} logged in successfully on {DateTime.Now}");
 
-                return GenericResponse<LoginResponse>.Success(loginResponse, "Login successful");
+                await _loginEmailService.SendLoginMailNotificationAsync(user);
+
+                return GenericResponse<MerchantUserLoginResponse>.Success(loginResponse, "Login successful");
             }
             catch (Exception ex)
              when (ex is GenericException || ex is NotFoundException)

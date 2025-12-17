@@ -6,8 +6,8 @@ namespace ElevaniPaymentGateway.Infrastructure.Interfaces.Services
 {
     public interface IAuthenticationService : IAutoDependencyServices
     {
-        Task<GenericResponse<LoginResponse>> MerchantLoginAsync(LoginRequest request);
-        Task<GenericResponse<LoginResponse>> AdminLoginAsync(LoginRequest request);
+        Task<GenericResponse<MerchantUserLoginResponse>> MerchantLoginAsync(LoginRequest request);
+        Task<GenericResponse<AdminUserLoginResponse>> AdminLoginAsync(LoginRequest request);
         Task<GenericResponse<LoginResponse>> RefreshToken(RefreshTokenRequest request);
     }
 }

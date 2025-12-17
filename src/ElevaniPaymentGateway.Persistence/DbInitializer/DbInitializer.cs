@@ -21,6 +21,7 @@ namespace ElevaniPaymentGateway.Persistence.DbInitializer
                 {
                     Id = Guid.NewGuid(),
                     Name = nameof(UserRoles.SuperAdmin),
+                    RoleType = RoleTypes.AdminUser,
                     Description ="Super admin role",
                     CreatedBy = "System"
                 },
@@ -28,14 +29,24 @@ namespace ElevaniPaymentGateway.Persistence.DbInitializer
                 {
                     Id = Guid.NewGuid(),
                     Name = nameof(UserRoles.Admin),
+                    RoleType = RoleTypes.AdminUser,
                     Description = "Admin role",
                     CreatedBy = "System"
                 },
                 new Role
                 {
                     Id = Guid.NewGuid(),
-                    Name = nameof(UserRoles.Merchant),
-                    Description = "Merchant role",
+                    Name = nameof(UserRoles.MerchantAdmin),
+                    Description = "Merchant admin role",
+                    RoleType = RoleTypes.Merchant,
+                    CreatedBy = "System"
+                },
+                new Role
+                {
+                    Id = Guid.NewGuid(),
+                    Name = nameof(UserRoles.MerchantUser),
+                    RoleType = RoleTypes.Merchant,
+                    Description = "Merchant user role",
                     CreatedBy = "System"
                 },
             };

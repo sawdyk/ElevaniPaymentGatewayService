@@ -10,6 +10,8 @@ namespace ElevaniPaymentGateway.Persistence.Configurations
         {
             builder.HasKey(entity => entity.Id);
 
+            builder.Property(entity => entity.RoleType).HasConversion<string>();
+
             builder.HasMany(e => e.UserRoles).WithOne(e => e.Role).HasForeignKey(ur => ur.RoleId).IsRequired();
         }
     }

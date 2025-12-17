@@ -26,7 +26,7 @@ namespace ElevaniPaymentGateway.Infrastructure.Implementations.Queries
                 Merchant? Merchant = null;
                 if (loadNavigationProps)
                     Merchant = await _dbContext.Set<Merchant>().Where(predicate)
-                         .Include(x => x.Transactions)
+                         .Include(x => x.MerchantCredential).Include(x => x.MerchantIPAddresses)
                         .AsNoTracking().AsSplitQuery().FirstOrDefaultAsync();
                 else
                     Merchant = await _dbContext.Set<Merchant>().Where(predicate)
@@ -49,7 +49,7 @@ namespace ElevaniPaymentGateway.Infrastructure.Implementations.Queries
                 IQueryable<Merchant>? Merchant = null;
                 if (loadNavigationProps)
                     Merchant = _dbContext.Set<Merchant>()
-                          .Include(x => x.Transactions)
+                          .Include(x => x.MerchantCredential).Include(x => x.MerchantIPAddresses)
                         .OrderByDescending(x => x.CreatedAt).AsNoTracking().AsSplitQuery();
                 else
                     Merchant = _dbContext.Set<Merchant>()
@@ -72,7 +72,7 @@ namespace ElevaniPaymentGateway.Infrastructure.Implementations.Queries
                 IQueryable<Merchant>? Merchant = null;
                 if (loadNavigationProps)
                     Merchant = _dbContext.Set<Merchant>().Where(predicate)
-                           .Include(x => x.Transactions)
+                           .Include(x => x.MerchantCredential).Include(x => x.MerchantIPAddresses)
                         .OrderByDescending(x => x.CreatedAt).AsNoTracking().AsSplitQuery();
                 else
                     Merchant = _dbContext.Set<Merchant>().Where(predicate)
