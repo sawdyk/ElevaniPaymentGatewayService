@@ -46,8 +46,8 @@ builder.Services.RegisterServicesHttpProxyClient(builder.Configuration);
 builder.Services.AddMerchantRateLimiting(builder.Configuration);
 
 var app = builder.Build();
-//app.SeedRoles().Wait();
-//app.SeedSuperAdmin().Wait();
+app.SeedRoles().Wait();
+app.SeedSuperAdmin().Wait();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
