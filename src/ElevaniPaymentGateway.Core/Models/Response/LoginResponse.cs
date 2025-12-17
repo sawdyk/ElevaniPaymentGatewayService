@@ -12,11 +12,7 @@ namespace ElevaniPaymentGateway.Core.Models.Response
         public string RefreshToken { get; set; }
     }
 
-    public class AdminUserLoginResponse : LoginResponse
-    {
-    }
-
-    public class MerchantUserLoginResponse : LoginResponse
+    public class UserLoginResponse : LoginResponse
     {
         public Merchant Merchant { get; set; }
     }

@@ -18,38 +18,22 @@ namespace ElevaniPaymentGateway.MerchantAPI.Controllers
             _authenticationService = authenticationService;
         }
 
-        [HttpPost("merchant")]
-        [SwaggerOperation("Merchant login")]
-        [SwaggerResponse(StatusCodes.Status200OK, "Success", typeof(GenericResponse<LoginResponse>))]
+        [HttpPost("login")]
+        [SwaggerOperation("Admin and Merchant users login endpoint")]
+        [SwaggerResponse(StatusCodes.Status200OK, "Success", typeof(GenericResponse<UserLoginResponse>))]
         [SwaggerResponse(StatusCodes.Status400BadRequest, "Failed", typeof(ProblemDetails))]
         [SwaggerResponse(StatusCodes.Status500InternalServerError, "Internal server error", typeof(ProblemDetails))]
-        public async Task<IActionResult> MerchantLoginAsync(LoginRequest request)
+        public async Task<IActionResult> LoginAsync(LoginRequest request)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest();
             }
 
-            var response = await _authenticationService.MerchantLoginAsync(request);
+            var response = await _authenticationService.LoginAsync(request);
             return Ok(response);
         }
-
-        [HttpPost("admin")]
-        [SwaggerOperation("Admin user login")]
-        [SwaggerResponse(StatusCodes.Status200OK, "Success", typeof(GenericResponse<LoginResponse>))]
-        [SwaggerResponse(StatusCodes.Status400BadRequest, "Failed", typeof(ProblemDetails))]
-        [SwaggerResponse(StatusCodes.Status500InternalServerError, "Internal server error", typeof(ProblemDetails))]
-        public async Task<IActionResult> AdminLoginAsync(LoginRequest request)
-        {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest();
-            }
-
-            var response = await _authenticationService.AdminLoginAsync(request);
-            return Ok(response);
-        }
-
+        
         [HttpPost("refresh-token")]
         [SwaggerOperation("Generate a refresh token")]
         [SwaggerResponse(StatusCodes.Status200OK, "Success", typeof(GenericResponse<LoginResponse>))]
