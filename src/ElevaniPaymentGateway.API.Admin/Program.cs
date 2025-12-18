@@ -1,3 +1,4 @@
+using AspNetCoreRateLimit;
 using ElevaniPaymentGateway.Infrastructure.Extensions;
 using ElevaniPaymentGateway.Infrastructure.Middlewares;
 using ElevaniPaymentGateway.Persistence.DbInitializer;
@@ -65,6 +66,10 @@ app.UseSwaggerUI(c =>
 {
     c.DefaultModelsExpandDepth(-1);
 });
+
+app.UseCors("CorsPolicy");
+
+app.UseIpRateLimiting();
 
 app.UseHttpsRedirection();
 
