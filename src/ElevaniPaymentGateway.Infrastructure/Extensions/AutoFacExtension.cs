@@ -7,7 +7,7 @@ namespace ElevaniPaymentGateway.Infrastructure.Extensions
 {
     public static class AutoFacExtension
     {
-        public static void AddAutoFacExtension(this IHostBuilder hostBuilder)
+        public static void AddAutoFac(this IHostBuilder hostBuilder)
         {
             hostBuilder.UseServiceProviderFactory(new AutofacServiceProviderFactory())
             .ConfigureContainer<ContainerBuilder>(builder =>

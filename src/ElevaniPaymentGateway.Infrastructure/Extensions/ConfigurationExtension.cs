@@ -7,7 +7,7 @@ namespace ElevaniPaymentGateway.Infrastructure.Extensions
 {
     public static class ConfigurationExtension
     {
-        public static void AddConfigurationExtensions(this IServiceCollection services, IConfiguration configuration)
+        public static void AddConfiguration(this IServiceCollection services, IConfiguration configuration)
         {
             services.Configure<JwtConfig>(configuration.GetSection("JwtConfig"));
             services.Configure<AppSettingsConfig>(configuration.GetSection("AppSettingsConfig"));

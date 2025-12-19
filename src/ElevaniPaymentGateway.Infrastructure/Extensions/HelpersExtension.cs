@@ -10,7 +10,7 @@ namespace ElevaniPaymentGateway.Infrastructure.Extensions
 {
     public static class HelpersExtension
     {
-        public static void AddHelpersExtension(this IServiceCollection services)
+        public static void AddHelpers(this IServiceCollection services)
         {
             services.AddScoped<AESAlgoHelper>();
             services.AddScoped<ValidationHelper>();
