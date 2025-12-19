@@ -72,7 +72,7 @@ app.UseAuthentication();
 
 app.UseAuthorization();
 
-app.UseMiddleware<IPAddressWhitelistMiddleware>();
+//app.UseMiddleware<IPAddressWhitelistMiddleware>();
 
 app.UseMiddleware<ResponseHeaderMiddleware>();
 
