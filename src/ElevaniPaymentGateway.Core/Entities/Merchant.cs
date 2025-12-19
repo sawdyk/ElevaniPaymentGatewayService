@@ -23,6 +23,7 @@ namespace ElevaniPaymentGateway.Core.Entities
         public DateTime UpdatedAt { get; set; }
 
 
-        public virtual ICollection<Transaction> Transactions { get; set; }
+        public virtual MerchantCredential MerchantCredential { get; set; }
+        public virtual ICollection<MerchantIPAddress> MerchantIPAddresses { get; set; }
     }
 }

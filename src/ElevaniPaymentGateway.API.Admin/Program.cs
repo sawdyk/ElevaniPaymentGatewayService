@@ -1,3 +1,4 @@
+using AspNetCoreRateLimit;
 using ElevaniPaymentGateway.Infrastructure.Extensions;
 using ElevaniPaymentGateway.Infrastructure.Middlewares;
 using ElevaniPaymentGateway.Persistence.DbInitializer;
@@ -17,25 +18,27 @@ builder.Services.AddControllers()
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 
-builder.Host.AddAppLoggingExtension();
+builder.Host.AddAppLogging();
+
+builder.Services.AddAdminCORSPolicy();
 
 //Autofac
-builder.Host.AddAutoFacExtension();
+builder.Host.AddAutoFac();
 
 //Database
-builder.Services.AddPersistenceExtension(builder.Configuration);
+builder.Services.AddPersistence(builder.Configuration);
 
-builder.Services.AddHelpersExtension();
+builder.Services.AddHelpers();
 
-builder.Services.AddMerchantSwaggerExtension();
+builder.Services.AddAdminSwagger();
 
-builder.Services.AddMerchantJWTAuthenticationExtension(builder.Configuration);
+builder.Services.AddAdminJWTAuthentication(builder.Configuration);
 
-builder.Services.AddConfigurationExtensions(builder.Configuration);
+builder.Services.AddConfiguration(builder.Configuration);
 
-builder.Services.AddRepositoryExtension();
+builder.Services.AddRepository();
 
-builder.Services.AddMiddlewareExtension();
+builder.Services.AddAdminMiddleware();
 
 builder.Services.AddHttpContextAccessor();
 
@@ -65,6 +68,10 @@ app.UseSwaggerUI(c =>
 {
     c.DefaultModelsExpandDepth(-1);
 });
+
+app.UseCors("CorsPolicy");
+
+app.UseIpRateLimiting();
 
 app.UseHttpsRedirection();
 

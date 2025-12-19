@@ -6,7 +6,7 @@ namespace ElevaniPaymentGateway.Infrastructure.Extensions
 {
     public static class RepositoryExtension
     {
-        public static void AddRepositoryExtension(this IServiceCollection services)
+        public static void AddRepository(this IServiceCollection services)
         {
             services.AddScoped(typeof(IBaseRepository<>), typeof(BaseRepository<>));
         }

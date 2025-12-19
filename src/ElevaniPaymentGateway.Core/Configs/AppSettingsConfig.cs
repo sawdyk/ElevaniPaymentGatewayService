@@ -7,5 +7,6 @@
         public string APIKeyHeader { get; set; }
         public int MerchantCredentialExpiration { get; set; }
         public bool EnableAPIEncryption { get; set; }
+        public int OTPExpiry { get; set; }
     }
 }

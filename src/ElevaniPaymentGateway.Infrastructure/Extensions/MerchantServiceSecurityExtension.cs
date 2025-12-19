@@ -11,7 +11,7 @@ namespace ElevaniPaymentGateway.Infrastructure.Extensions
 {
     public static class MerchantServiceSecurityExtension
     {
-        public static void AddCORSPolicyExtension(this IServiceCollection services)
+        public static void AddAdminCORSPolicy(this IServiceCollection services)
         {
             services.AddCors(options =>
             {
@@ -24,7 +24,7 @@ namespace ElevaniPaymentGateway.Infrastructure.Extensions
             });
         }
 
-        public static void AddMerchantSwaggerExtension(this IServiceCollection services)
+        public static void AddAdminSwagger(this IServiceCollection services)
         {
             services.AddSwaggerGen(c =>
             {
@@ -53,7 +53,7 @@ namespace ElevaniPaymentGateway.Infrastructure.Extensions
             });
         }
 
-        public static void AddMerchantJWTAuthenticationExtension(this IServiceCollection services, IConfiguration configuration)
+        public static void AddAdminJWTAuthentication(this IServiceCollection services, IConfiguration configuration)
         {
             var jwtConfig = configuration.GetSection("JwtConfig");
             services.AddAuthentication(options =>

@@ -9,7 +9,7 @@ namespace ElevaniPaymentGateway.Infrastructure.Extensions
 {
     public static class PersistenceExtension
     {
-        public static void AddPersistenceExtension(this IServiceCollection services, IConfiguration configuration)
+        public static void AddPersistence(this IServiceCollection services, IConfiguration configuration)
         {
             services.AddIdentity<User, Role>(options =>
             {

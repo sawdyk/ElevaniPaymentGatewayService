@@ -1,4 +1,3 @@
-using Autofac.Core;
 using ElevaniPaymentGateway.Infrastructure.BackgroundServices.Gratip;
 using ElevaniPaymentGateway.Infrastructure.Extensions;
 
@@ -12,19 +11,19 @@ builder.Services.AddEndpointsApiExplorer();
 
 builder.Services.AddSwaggerGen();
 
-builder.Host.AddAppLoggingExtension();
+builder.Host.AddAppLogging();
 
 //Autofac
-builder.Host.AddAutoFacExtension();
+builder.Host.AddAutoFac();
 
 //Database
-builder.Services.AddPersistenceExtension(builder.Configuration);
+builder.Services.AddPersistence(builder.Configuration);
 
-builder.Services.AddHelpersExtension();
+builder.Services.AddHelpers();
 
-builder.Services.AddConfigurationExtensions(builder.Configuration);
+builder.Services.AddConfiguration(builder.Configuration);
 
-builder.Services.AddRepositoryExtension();
+builder.Services.AddRepository();
 
 builder.Services.RegisterServicesHttpProxy();
 

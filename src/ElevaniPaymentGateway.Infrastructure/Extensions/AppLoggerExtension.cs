@@ -7,7 +7,7 @@ namespace ElevaniPaymentGateway.Infrastructure.Extensions
 {
     public static class AppLoggerExtension
     {
-        public static void AddAppLoggingExtension(this IHostBuilder hostBuilder)
+        public static void AddAppLogging(this IHostBuilder hostBuilder)
         {
             //Logging
             hostBuilder.ConfigureLogging(logging =>

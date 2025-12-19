@@ -24,7 +24,7 @@ namespace ElevaniPaymentGateway.Infrastructure.Extensions
             });
         }
 
-        public static void AddPaymentSwaggerExtension(this IServiceCollection services)
+        public static void AddPaymentSwagger(this IServiceCollection services)
         {
             services.AddSwaggerGen(c =>
             {
@@ -53,7 +53,7 @@ namespace ElevaniPaymentGateway.Infrastructure.Extensions
             });
         }
 
-        public static void AddPaymentJWTAuthenticationExtension(this IServiceCollection services, IConfiguration configuration)
+        public static void AddPaymentJWTAuthentication(this IServiceCollection services, IConfiguration configuration)
         {
             var jwtConfig = configuration.GetSection("JwtConfig");
             services.AddAuthentication(options =>

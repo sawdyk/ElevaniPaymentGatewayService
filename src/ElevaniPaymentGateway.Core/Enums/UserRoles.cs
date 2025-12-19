@@ -11,7 +11,9 @@ namespace ElevaniPaymentGateway.Core.Enums
         SuperAdmin = 1,
         [Display(Description = "Admin")]
         Admin,
-        [Display(Description = "Merchant")]
-        Merchant,
+        [Display(Description = "Merchant Admin")]
+        MerchantAdmin,
+        [Display(Description = "Merchant User")]
+        MerchantUser,
     }
 }
