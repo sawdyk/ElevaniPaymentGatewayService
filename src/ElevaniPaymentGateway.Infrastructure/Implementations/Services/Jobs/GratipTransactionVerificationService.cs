@@ -62,7 +62,8 @@ namespace ElevaniPaymentGateway.Infrastructure.Implementations.Services.Jobs
                         _logger.LogInformation($"tranaction reference {gratipTransaction.TransactionReference} " +
                             $"| finalize data status => {finalizeTransactionResp.data.status}");
 
-                        if (finalizeTransactionResp.data.status.Equals("success") || finalizeTransactionResp.data.status.Equals("successful"))
+                        //check transaction status
+                        if (finalizeTransactionResp.data.status.Equals("successful"))
                         {
                             gratipTransaction.IsVerified = true;
                             gratipTransaction.Status = TransactionStatus.Completed;
