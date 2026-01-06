@@ -94,8 +94,8 @@ namespace ElevaniPaymentGateway.Infrastructure.Implementations.Services.Jobs
                             }
                         }
 
-                        gratipTransaction.UpdatedAt = DateTime.Now;
-                        gratipTransaction.DateVerified = DateTime.Now;
+                        gratipTransaction.UpdatedAt = DateTime.UtcNow;
+                        gratipTransaction.DateVerified = DateTime.UtcNow;
                         gratipTransaction.UpdatedBy = "Job";
 
                         var sqlTransaction = await _sqlTransactionService.BeginTransactionAsync();
@@ -103,7 +103,7 @@ namespace ElevaniPaymentGateway.Infrastructure.Implementations.Services.Jobs
                         _gratipTransactionRepository.Update(gratipTransaction);
                         await _gratipTransactionRepository.SaveChangesAsync();
 
-                        transaction.UpdatedAt = DateTime.Now;
+                        transaction.UpdatedAt = DateTime.UtcNow;
                         transaction.UpdatedBy = "Job";
 
                         _transactionRepository.Update(transaction);

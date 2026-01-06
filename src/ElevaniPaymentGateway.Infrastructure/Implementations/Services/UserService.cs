@@ -351,7 +351,7 @@ namespace ElevaniPaymentGateway.Infrastructure.Implementations.Services
                 if (user is null) throw new NotFoundException("User does not exist");
 
                 user.Status = request.Status;
-                user.UpdatedAt = DateTime.Now;
+                user.UpdatedAt = DateTime.UtcNow;
                 user.UpdatedBy = _userContext.UserId.ToString();
 
                 _userRepository.Update(user);
@@ -389,7 +389,7 @@ namespace ElevaniPaymentGateway.Infrastructure.Implementations.Services
                 user.FirstName = string.IsNullOrEmpty(request.FirstName) ? user.FirstName : request.FirstName;
                 user.LastName = string.IsNullOrEmpty(request.LastName) ? user.LastName : request.LastName;
                 user.PhoneNumber = string.IsNullOrEmpty(request.PhoneNumber) ? user.PhoneNumber : request.PhoneNumber;
-                user.UpdatedAt = DateTime.Now;
+                user.UpdatedAt = DateTime.UtcNow;
                 user.UpdatedBy = _userContext.UserId.ToString();
 
                 var transaction =  await _sqlTransactionService.BeginTransactionAsync();
@@ -441,7 +441,7 @@ namespace ElevaniPaymentGateway.Infrastructure.Implementations.Services
                 user.FirstName = string.IsNullOrEmpty(request.FirstName) ? user.FirstName : request.FirstName;
                 user.LastName = string.IsNullOrEmpty(request.LastName) ? user.LastName : request.LastName;
                 user.PhoneNumber = string.IsNullOrEmpty(request.PhoneNumber) ? user.PhoneNumber : request.PhoneNumber;
-                user.UpdatedAt = DateTime.Now;
+                user.UpdatedAt = DateTime.UtcNow;
                 user.UpdatedBy = _userContext.UserId.ToString();
 
                 var transaction = await _sqlTransactionService.BeginTransactionAsync();
@@ -454,7 +454,7 @@ namespace ElevaniPaymentGateway.Infrastructure.Implementations.Services
                 {
                     userRole.UserId = user.Id;
                     userRole.RoleId = role.Id;
-                    userRole.UpdatedAt = DateTime.Now;
+                    userRole.UpdatedAt = DateTime.UtcNow;
                     userRole.UpdatedBy = _userContext.UserId.ToString();
 
                     _userRoleRepository.Update(userRole);
@@ -466,7 +466,7 @@ namespace ElevaniPaymentGateway.Infrastructure.Implementations.Services
                 {
                     merchantUser.MerchantId = request.MerchantId;
                     merchantUser.UserId = user.Id;
-                    merchantUser.UpdatedAt = DateTime.Now;
+                    merchantUser.UpdatedAt = DateTime.UtcNow;
                     merchantUser.UpdatedBy = _userContext.UserId.ToString();
 
                     _merchantUserRepository.Update(merchantUser);

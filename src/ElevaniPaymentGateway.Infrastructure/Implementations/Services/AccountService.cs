@@ -65,7 +65,7 @@ namespace ElevaniPaymentGateway.Infrastructure.Implementations.Services
                     throw new GenericException(sb.ToString());
                 }
 
-                user.UpdatedAt = DateTime.Now;
+                user.UpdatedAt = DateTime.UtcNow;
                 user.UpdatedBy = user.Id.ToString();
                 user.LastPasswordChangeDate = DateTime.Now;
 
@@ -174,13 +174,13 @@ namespace ElevaniPaymentGateway.Infrastructure.Implementations.Services
 
                 var dbTransaction = await _sqlTransactionService.BeginTransactionAsync();
 
-                user.UpdatedAt = DateTime.Now;
+                user.UpdatedAt = DateTime.UtcNow;
                 user.UpdatedBy = user.Id.ToString();
-                user.LastPasswordResetDate = DateTime.Now;
+                user.LastPasswordResetDate = DateTime.UtcNow;
                 await _userManager.UpdateAsync(user);
 
                 userOtp.IsUsed = true;
-                userOtp.DateUsed = DateTime.Now;
+                userOtp.DateUsed = DateTime.UtcNow;
                 _otpRepository.Update(userOtp);
                 await _otpRepository.SaveChangesAsync();
 
@@ -218,7 +218,7 @@ namespace ElevaniPaymentGateway.Infrastructure.Implementations.Services
 
                 var userOtp = await _otpQuery.GetByAsync(x => x.UserId == user.Id && x.OTPValue == request.OTP && x.OTPType == request.OTPType, false);
                 if (userOtp is null) throw new GenericException(RespMsgConstants.InValidOTP);
-                if (DateTime.Now > userOtp.ExpiryDateTime) throw new GenericException(RespMsgConstants.ExpiredOTP);
+                if (DateTime.UtcNow > userOtp.ExpiryDateTime) throw new GenericException(RespMsgConstants.ExpiredOTP);
                 if (userOtp.IsUsed) throw new GenericException(RespMsgConstants.InValidOTP);
                 if (!userOtp.OTPValue.Equals(request.OTP.Trim())) throw new GenericException(RespMsgConstants.InValidOTP);
 

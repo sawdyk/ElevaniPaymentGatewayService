@@ -14,7 +14,7 @@ namespace ElevaniPaymentGateway.Core.Entities
         public string IPAddress { get; set; }
         public ActivityTypes Activity { get; set; }
         public string? ActivityDetails { get; set; }
-        public DateTime CreatedAt { get; set; } = DateTime.Now;
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
 
         [ForeignKey("UserId")]

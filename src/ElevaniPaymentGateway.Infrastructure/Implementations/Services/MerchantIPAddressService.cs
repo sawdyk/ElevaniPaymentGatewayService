@@ -160,7 +160,7 @@ namespace ElevaniPaymentGateway.Infrastructure.Implementations.Services
                 merchantIPAddress.MerchantId = request.MerchantId;
                 merchantIPAddress.IPAddress = request.IPAddress;
                 merchantIPAddress.UpdatedBy = _userContext.UserId.ToString();
-                merchantIPAddress.UpdatedAt = DateTime.Now;
+                merchantIPAddress.UpdatedAt = DateTime.UtcNow;
 
                 var transaction = await _sqlTransactionService.BeginTransactionAsync();
 
