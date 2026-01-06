@@ -9,7 +9,7 @@ namespace ElevaniPaymentGateway.Core.Entities
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public Guid Id { get; set; }
         public string? CreatedBy { get; set; }
-        public DateTime CreatedAt { get; set; } = DateTime.Now;
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
         public string? UpdatedBy { get; set; }
         public DateTime UpdatedAt { get; set; }
     }

@@ -105,7 +105,7 @@ namespace ElevaniPaymentGateway.Infrastructure.Implementations.Services
                 var accessToken = await _jwtUtilityService.GenerateAccessToken(userDto);
                 var refreshToken = _jwtUtilityService.GenerateRefreshToken();
 
-                user.LastLoginDate = DateTime.Now;
+                user.LastLoginDate = DateTime.UtcNow;
                 user.RefreshToken = refreshToken;
                 user.RefreshTokenExpiration = DateTime.Now.AddMinutes(_jwtConfig.RefreshExpiration);
 

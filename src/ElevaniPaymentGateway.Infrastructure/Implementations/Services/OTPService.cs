@@ -64,7 +64,7 @@ namespace ElevaniPaymentGateway.Infrastructure.Implementations.Services
                     userOtp.DateUsed = null;
                     userOtp.ExpiryDateTime = DateTime.Now.AddMinutes(_appSettingsConfig.OTPExpiry);
                     userOtp.UpdatedBy = "Sytem";
-                    userOtp.UpdatedAt = DateTime.Now;
+                    userOtp.UpdatedAt = DateTime.UtcNow;
 
                     _OTPRepository.Update(userOtp);
                     await _OTPRepository.SaveChangesAsync();
