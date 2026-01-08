@@ -10,6 +10,7 @@ using Microsoft.Extensions.Logging;
 using OfficeOpenXml;
 using OfficeOpenXml.Style;
 using System.Net;
+using static ElevaniPaymentGateway.Core.Helpers.Pagination.QueryableExtensions;
 
 namespace ElevaniPaymentGateway.Infrastructure.Implementations.Services
 {
@@ -27,6 +28,23 @@ namespace ElevaniPaymentGateway.Infrastructure.Implementations.Services
         {
             var reportResponse = new GenericResponse<ReportResponse<Transaction>>();
             var transactionsQuery = await _reportDataService.TransactionsReportAsync(request);
+
+            if (!string.IsNullOrWhiteSpace(paginationParams.SearchTerm))
+            {
+                var searchConfig = new SearchConfig<Transaction>
+                {
+                    SearchTerm = paginationParams.SearchTerm,
+                    SearchProperties = new List<SearchProperty<Transaction>>
+                        {
+                            new(){ PropertyExpression = x => x.Reference, SearchType = SearchType.Contains },
+                            new(){ PropertyExpression = x => x.Currency, SearchType = SearchType.Contains },
+                            new(){ PropertyExpression = x => x.Amount, SearchType = SearchType.Contains },
+                        }
+                };
+
+                transactionsQuery = transactionsQuery.DynamicSearch(searchConfig);
+            }
+
             var paginatedResult = await transactionsQuery.ToPagedResultAsync(paginationParams);
             try
             {
