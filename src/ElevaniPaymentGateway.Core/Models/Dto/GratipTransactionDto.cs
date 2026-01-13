@@ -1,11 +1,10 @@
 ﻿using ElevaniPaymentGateway.Core.Enums;
-using System.ComponentModel.DataAnnotations.Schema;
 
-namespace ElevaniPaymentGateway.Core.Entities
+namespace ElevaniPaymentGateway.Core.Models.Dto
 {
-    [Table(nameof(GratipTransaction))]
-    public class GratipTransaction : BaseEntity
+    public class GratipTransactionDto
     {
+        public Guid Id { get; set; }
         public Guid TransactionId { get; set; }
         public string ExternalReference { get; set; }
         public string Currency { get; set; }
@@ -31,10 +30,6 @@ namespace ElevaniPaymentGateway.Core.Entities
         public bool IsVerified { get; set; } = false;
         public DateTime? DateVerified { get; set; } // date transaction was verified
         public DateTime? LastRetryDateTime { get; set; }
-        public TransactionStatus Status { get; set; } = TransactionStatus.Pending;
-
-
-        [ForeignKey("TransactionId")]
-        public Transaction Transaction { get; set; }
+        public TransactionStatus Status { get; set; }
     }
 }

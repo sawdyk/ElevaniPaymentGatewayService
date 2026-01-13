@@ -23,6 +23,8 @@ namespace ElevaniPaymentGateway.Core.Entities
         [ForeignKey("MerchantId")]
         public Merchant Merchant { get; set; }
 
+        public virtual GratipTransaction GratipTransaction { get; set; }
+
         //create two endpoints, one for collecting and processing card details (MPGs), the other, to generate a payment link (Payment gateways)
         //merchant initiate transaction, check the merchant payment gateway, if gratip, call the gratip service, if flutterwave, call the flutterwave service,
         //if WEMA_MPGS, call the WEMA_MPGS
