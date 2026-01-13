@@ -26,7 +26,8 @@ namespace ElevaniPaymentGateway.Infrastructure.Implementations.Queries
                 Transaction? Transaction = null;
                 if (loadNavigationProps)
                     Transaction = await _dbContext.Set<Transaction>().Where(predicate)
-                         .Include(x => x.Merchant)
+                         .Include(x => x.Merchant).AsNoTracking()
+                         .Include(x => x.GratipTransaction).AsNoTracking()
                         .AsNoTracking().AsSplitQuery().FirstOrDefaultAsync();
                 else
                     Transaction = await _dbContext.Set<Transaction>().Where(predicate)
@@ -49,7 +50,8 @@ namespace ElevaniPaymentGateway.Infrastructure.Implementations.Queries
                 IQueryable<Transaction>? Transaction = null;
                 if (loadNavigationProps)
                     Transaction = _dbContext.Set<Transaction>()
-                          .Include(x => x.Merchant)
+                          .Include(x => x.Merchant).AsNoTracking()
+                         .Include(x => x.GratipTransaction).AsNoTracking()
                         .OrderByDescending(x => x.CreatedAt).AsNoTracking().AsSplitQuery();
                 else
                     Transaction = _dbContext.Set<Transaction>()
@@ -72,7 +74,8 @@ namespace ElevaniPaymentGateway.Infrastructure.Implementations.Queries
                 IQueryable<Transaction>? Transaction = null;
                 if (loadNavigationProps)
                     Transaction = _dbContext.Set<Transaction>().Where(predicate)
-                           .Include(x => x.Merchant)
+                           .Include(x => x.Merchant).AsNoTracking()
+                         .Include(x => x.GratipTransaction).AsNoTracking()
                         .OrderByDescending(x => x.CreatedAt).AsNoTracking().AsSplitQuery();
                 else
                     Transaction = _dbContext.Set<Transaction>().Where(predicate)

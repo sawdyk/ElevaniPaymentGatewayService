@@ -39,6 +39,7 @@ namespace ElevaniPaymentGateway.Infrastructure.Implementations.Services
                             new(){ PropertyExpression = x => x.Reference, SearchType = SearchType.Contains },
                             new(){ PropertyExpression = x => x.Currency, SearchType = SearchType.Contains },
                             new(){ PropertyExpression = x => x.Amount, SearchType = SearchType.Contains },
+                            new(){ PropertyExpression = x => x.GratipTransaction.TransactionReference, SearchType = SearchType.Contains },
                         }
                 };
 
@@ -62,12 +63,13 @@ namespace ElevaniPaymentGateway.Infrastructure.Implementations.Services
                     workSheet.Cells[1, 1].Value = "S/N";
                     workSheet.Cells[1, 2].Value = "Merchant ID";
                     workSheet.Cells[1, 3].Value = "Reference";
-                    workSheet.Cells[1, 4].Value = "Currency";
-                    workSheet.Cells[1, 5].Value = "Amount";
-                    workSheet.Cells[1, 6].Value = "Narration";
-                    workSheet.Cells[1, 7].Value = "Country Code";
-                    workSheet.Cells[1, 8].Value = "Status";
-                    workSheet.Cells[1, 9].Value = "Date Created";
+                    workSheet.Cells[1, 4].Value = "Transaction Reference";
+                    workSheet.Cells[1, 5].Value = "Currency";
+                    workSheet.Cells[1, 6].Value = "Amount";
+                    workSheet.Cells[1, 7].Value = "Narration";
+                    workSheet.Cells[1, 8].Value = "Country Code";
+                    workSheet.Cells[1, 9].Value = "Status";
+                    workSheet.Cells[1, 10].Value = "Date Created";
 
                     if (transactionsQuery.Any())
                     {
@@ -79,17 +81,18 @@ namespace ElevaniPaymentGateway.Infrastructure.Implementations.Services
                             workSheet.Cells[recordIndex, 1].Value = (recordIndex - 1).ToString();
                             workSheet.Cells[recordIndex, 2].Value = $"{trans.MerchantId}";
                             workSheet.Cells[recordIndex, 3].Value = trans.Reference;
-                            workSheet.Cells[recordIndex, 4].Value = trans.Currency;
-                            workSheet.Cells[recordIndex, 5].Value = trans.Amount;
-                            workSheet.Cells[recordIndex, 6].Value = trans.Narration;
-                            workSheet.Cells[recordIndex, 7].Value = trans.CountryCode;
-                            workSheet.Cells[recordIndex, 8].Value = trans.Status;
-                            workSheet.Cells[recordIndex, 9].Value = trans.CreatedAt.ToString("dd/MM/yyyy");
+                            workSheet.Cells[recordIndex, 4].Value = trans.GratipTransaction.TransactionReference;
+                            workSheet.Cells[recordIndex, 5].Value = trans.Currency;
+                            workSheet.Cells[recordIndex, 6].Value = trans.Amount;
+                            workSheet.Cells[recordIndex, 7].Value = trans.Narration;
+                            workSheet.Cells[recordIndex, 8].Value = trans.CountryCode;
+                            workSheet.Cells[recordIndex, 9].Value = trans.Status;
+                            workSheet.Cells[recordIndex, 10].Value = trans.CreatedAt.ToString("dd/MM/yyyy");
                             recordIndex++;
                         }
 
                         //Cell fitting formatters
-                        for (int col = 1; col <= 9; col++)
+                        for (int col = 1; col <= 10; col++)
                             workSheet.Column(col).AutoFit();
                     }
 

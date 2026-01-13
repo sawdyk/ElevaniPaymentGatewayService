@@ -108,7 +108,7 @@ namespace ElevaniPaymentGateway.Infrastructure.Implementations.Services
         {
             try
             {
-                var transactionsQuery = await _transactionQuery.ListAsync(x => x.MerchantId == merchantId);
+                var transactionsQuery = await _transactionQuery.ListAsync(x => x.MerchantId == merchantId, true);
                 if (!string.IsNullOrWhiteSpace(paginationParams.SearchTerm))
                 {
                     var searchConfig = new SearchConfig<Transaction>
@@ -119,6 +119,7 @@ namespace ElevaniPaymentGateway.Infrastructure.Implementations.Services
                             new(){ PropertyExpression = x => x.Reference, SearchType = SearchType.Contains },
                             new(){ PropertyExpression = x => x.Currency, SearchType = SearchType.Contains },
                             new(){ PropertyExpression = x => x.Amount, SearchType = SearchType.Contains },
+                            new(){ PropertyExpression = x => x.GratipTransaction.TransactionReference, SearchType = SearchType.Contains },
                         }
                     };
 

@@ -16,6 +16,8 @@ namespace ElevaniPaymentGateway.Core.Helpers.AutoMapper
             CreateMap<PagedResult<User>, PagedResult<UserDto>>();
             CreateMap<Transaction, TransactionDto>();
             CreateMap<PagedResult<Transaction>, PagedResult<TransactionDto>>();
+            CreateMap<GratipTransaction, GratipTransactionDto>();
+            CreateMap<PagedResult<GratipTransaction>, PagedResult<GratipTransactionDto>>();
         }
     }
 }

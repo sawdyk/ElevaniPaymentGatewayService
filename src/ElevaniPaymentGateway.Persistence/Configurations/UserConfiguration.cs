@@ -23,7 +23,7 @@ namespace ElevaniPaymentGateway.Persistence.Configurations
 
             builder.Property(entity => entity.DateOfBirth).HasDefaultValue(DateTime.Now);
 
-            builder.Property(entity => entity.Status).HasDefaultValue(UserStatus.InActive).HasConversion<string>();
+            builder.Property(entity => entity.Status).HasDefaultValue(UserStatus.Active).HasConversion<string>();
 
 
 

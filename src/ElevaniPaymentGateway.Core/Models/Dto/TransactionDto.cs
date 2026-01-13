@@ -19,5 +19,7 @@ namespace ElevaniPaymentGateway.Core.Models.Dto
         public TransactionStatus Status { get; set; }
         public DateTime CreatedAt { get; set; }
         public DateTime? UpdatedAt { get; set; }
+
+        public GratipTransactionDto GratipTransaction { get; set; }
     }
 }
