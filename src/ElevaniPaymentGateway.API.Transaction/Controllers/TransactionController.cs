@@ -39,6 +39,22 @@ namespace ElevaniPaymentGateway.PaymentAPI.Controllers
             return Ok(response);
         }
 
+        [HttpPost("initiate-card")]
+        [SwaggerOperation("Initiate card transaction")]
+        [SwaggerResponse(StatusCodes.Status200OK, "Success", typeof(GenericResponse<TransactionResponse>))]
+        [SwaggerResponse(StatusCodes.Status400BadRequest, "Failed", typeof(ProblemDetails))]
+        [SwaggerResponse(StatusCodes.Status500InternalServerError, "Internal server error", typeof(ProblemDetails))]
+        public async Task<IActionResult> InitiateTransactionViaServerAsync(string request)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest();
+            }
+
+            var response = await _transactionService.InitiateTransactionViaServerAsync(request);
+            return Ok(response);
+        }
+
         [HttpGet("status/{reference}")]
         [SwaggerOperation("Get transaction status by reference")]
         [SwaggerResponse(StatusCodes.Status200OK, "Success", typeof(GenericResponse<TransactionDto>))]

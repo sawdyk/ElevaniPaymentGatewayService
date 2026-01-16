@@ -9,8 +9,8 @@ namespace ElevaniPaymentGateway.Core.Enums
     {
         [Display(Description = "GRATIP")]
         GRATIP = 1,
-        [Display(Description = "WEMA_MPGS")]
-        WEMA_MPGS
+        [Display(Description = "PAY AGENCY")]
+        PAYAGENCY
     }
 
     [JsonConverter(typeof(StringEnumConverter))]

@@ -12,18 +12,33 @@ namespace ElevaniPaymentGateway.Core.Entities
         public decimal Amount { get; set; }
         public string? Narration { get; set; } //same as Description
         public string? CountryCode { get; set; }
-        public string? CustomerFirstName { get; set; }
-        public string? CustomerLastName { get; set; }
-        public string? CustomerEmail { get; set; }
-        public string? CustomerPhoneNumber { get; set; }
+        public string? FirstName { get; set; }
+        public string? LastName { get; set; }
+        public string? Email { get; set; }
+        public string? PhoneNumber { get; set; }
+
+
+        public string? City { get; set; }
+        public string? State { get; set; }
+        public string? Zip { get; set; }
+        public string? IPAddress { get; set; }
+        public string? CardNumber { get; set; }
+        public string? CardExpiryMonth { get; set; }
+        public string? CardExpiryYear { get; set; }
+        public string? CardCVV { get; set; }
+        public string? RedirectUrl { get; set; }
+        public string? WebHookUrl { get; set; }
+
+
         public PaymentGateways PaymentGateway { get; set; } // WemaMPGS, Gratip etc
-        public TransactionStatus Status { get; set; } = TransactionStatus.Pending;
+        public TransactionStatus Status { get; set; }
      
 
         [ForeignKey("MerchantId")]
         public Merchant Merchant { get; set; }
 
         public virtual GratipTransaction GratipTransaction { get; set; }
+        public virtual PayAgencyTransaction PayAgencyTransaction { get; set; }
 
         //create two endpoints, one for collecting and processing card details (MPGs), the other, to generate a payment link (Payment gateways)
         //merchant initiate transaction, check the merchant payment gateway, if gratip, call the gratip service, if flutterwave, call the flutterwave service,

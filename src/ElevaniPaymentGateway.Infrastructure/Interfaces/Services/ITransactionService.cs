@@ -13,5 +13,8 @@ namespace ElevaniPaymentGateway.Infrastructure.Interfaces.Services
         Task<GenericResponse<TransactionDto>> StatusAsync(string reference);
         Task<GenericPagedResponse<TransactionDto>> MerchantAsync(PaginationParams paginationParams);
         Task<GenericPagedResponse<TransactionDto>> MerchantIdAsync(string merchantId, PaginationParams paginationParams);
+
+
+        Task<GenericResponse<PATransactionResponse>> InitiateTransactionViaServerAsync(string encryptedRequest);
     }
 }

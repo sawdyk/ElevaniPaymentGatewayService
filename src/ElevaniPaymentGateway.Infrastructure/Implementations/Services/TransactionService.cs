@@ -13,6 +13,7 @@ using ElevaniPaymentGateway.Infrastructure.Interfaces.Queries;
 using ElevaniPaymentGateway.Infrastructure.Interfaces.Services;
 using ElevaniPaymentGateway.Infrastructure.Interfaces.Services.Helpers;
 using ElevaniPaymentGateway.Infrastructure.Interfaces.Services.PaymentGateway.Gratip;
+using ElevaniPaymentGateway.Infrastructure.Interfaces.Services.PaymentGateway.PayAgency;
 using Microsoft.Extensions.Logging;
 using static ElevaniPaymentGateway.Core.Helpers.Pagination.QueryableExtensions;
 
@@ -26,9 +27,10 @@ namespace ElevaniPaymentGateway.Infrastructure.Implementations.Services
         private readonly IGratipPaymentService _gratipPaymentService;
         private MerchantContextDto _merchantContext;
         private readonly IPaymentHttpContextHelperService _paymentHttpContextHelperService;
-        private readonly ValidationHelper _validationHelper;
+        private readonly IPayAgencyPaymentService _payAgencyPaymentService;
         public TransactionService(ILogger<TransactionService> logger, ITransactionQuery transactionQuery, IMapper mapper, 
-            IGratipPaymentService gratipPaymentService, IPaymentHttpContextHelperService paymentHttpContextHelperService, ValidationHelper validationHelper)
+            IGratipPaymentService gratipPaymentService, IPaymentHttpContextHelperService paymentHttpContextHelperService, 
+            IPayAgencyPaymentService payAgencyPaymentService)
         {
             _logger = logger;
             _transactionQuery = transactionQuery;
@@ -36,29 +38,18 @@ namespace ElevaniPaymentGateway.Infrastructure.Implementations.Services
             _gratipPaymentService = gratipPaymentService;
             _paymentHttpContextHelperService = paymentHttpContextHelperService;
             _merchantContext = _paymentHttpContextHelperService.MerchantContext();
-            _validationHelper = validationHelper;
+            _payAgencyPaymentService = payAgencyPaymentService;
         }
 
         public async Task<GenericResponse<TransactionResponse>> InitiateTransactionViaPaymentGatewayAsync(TransactionRequest request)
         {
             try
             {
-                _validationHelper.ValidateRequest(request);
                 TransactionResponse initiatePaymentResponse = new TransactionResponse();
-
-                var merhantSlug = request.Reference.Substring(0, 3);
-                if(!_merchantContext.Slug.Equals(merhantSlug))
-                    throw new GenericException("Invalid reference format");
-
-                var existingReference = await _transactionQuery.GetByAsync(x => x.Reference == request.Reference);
-                if (existingReference is not null)
-                    throw new GenericException("Duplicate reference");
-                //string reference = RandomGeneratorHelper.GenerateTransactionReference(_merchantContext.Slug, request.Currency, request.Amount.ToString());
-
                 switch (_merchantContext.PaymentGateway)
                 {
                     case nameof(PaymentGateways.GRATIP):
-                        initiatePaymentResponse = await _gratipPaymentService.InitiateTransactionAsync(_merchantContext.MerchantId, request);
+                        initiatePaymentResponse = await _gratipPaymentService.InitiateTransactionAsync(request);
                         break;
 
                     default:
@@ -76,6 +67,37 @@ namespace ElevaniPaymentGateway.Infrastructure.Implementations.Services
             catch (Exception ex)
             {
                 _logger.LogError($"An error occured while trying to initiate payment via payment gateway >> " +
+                    $"{ex.Message} | stack trace >> {ex.StackTrace} | inner exception >> {ex.InnerException} | source >> {ex.Source}");
+                throw new UnhandledException(RespMsgConstants.UnhandledException);
+            }
+        }
+
+        public async Task<GenericResponse<PATransactionResponse>> InitiateTransactionViaServerAsync(string encryptedRequest)
+        {
+            try
+            {
+                PATransactionResponse initiatePaymentResponse = new PATransactionResponse();
+                switch (_merchantContext.PaymentGateway)
+                {
+                    case nameof(PaymentGateways.PAYAGENCY):
+                        initiatePaymentResponse = await _payAgencyPaymentService.InitiateTransactionAsync(encryptedRequest);
+                        break;
+
+                    default:
+                        break;
+                }
+
+                return GenericResponse<PATransactionResponse>.Success(initiatePaymentResponse);
+            }
+            catch (Exception ex)
+            when (ex is NotFoundException || ex is GenericException
+            || ex is DataValidationException || ex is ArgumentException)
+            {
+                throw;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"An error occured while trying to initiate payment via server to server >> " +
                     $"{ex.Message} | stack trace >> {ex.StackTrace} | inner exception >> {ex.InnerException} | source >> {ex.Source}");
                 throw new UnhandledException(RespMsgConstants.UnhandledException);
             }

@@ -6,6 +6,6 @@ namespace ElevaniPaymentGateway.Infrastructure.Interfaces.Services.PaymentGatewa
 {
     public interface IGratipPaymentService : IAutoDependencyServices
     {
-        Task<TransactionResponse> InitiateTransactionAsync(string merchantId, TransactionRequest request);
+        Task<TransactionResponse> InitiateTransactionAsync(TransactionRequest request);
     }
 }

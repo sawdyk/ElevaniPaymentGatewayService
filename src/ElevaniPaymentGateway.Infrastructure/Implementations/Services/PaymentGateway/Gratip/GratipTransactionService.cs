@@ -31,22 +31,18 @@ namespace ElevaniPaymentGateway.Infrastructure.Implementations.Services.PaymentG
                     Method = request.method,
                     Amount = request.amount,
                     CountryCode = request.countryCode,
-                    //MerchantID = request.merchant_id,
                     Description = request.description,
                     PaymentURL = response.data.payment_url,
                     CollectionId = response.data.collection_id.ToString(),
                     TransactionReference = response.data.transaction_reference,
                     RequestReference = response.data.request_reference,
-                    //CustomerFirstName = request.customer_info is null ? "" : request.customer_info.firstName,
-                    //CustomerLastName = request.customer_info is null ? "" : request.customer_info.lastName,
-                    //CustomerEmail = request.customer_info is null ? "" : request.customer_info.email,
                 });
 
                 await _gratipTransactionRepository.SaveChangesAsync();
             }
             catch (Exception ex)
             {
-                _logger.LogError($"An error occured while trying to log Gratip transactions >> " +
+                _logger.LogError($"An error occured while trying to log gratip transactions >> " +
                     $"{ex.Message} | stack trace >> {ex.StackTrace} | inner exception >> {ex.InnerException} | source >> {ex.Source}");
                 throw new UnhandledException(RespMsgConstants.UnhandledException);
             }
