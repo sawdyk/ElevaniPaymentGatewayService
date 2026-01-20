@@ -15,6 +15,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ElevaniPaymentGateway.API.T
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ElevaniPaymentGateway.Worker.Transaction", "src\ElevaniPaymentGateway.Worker.Transaction\ElevaniPaymentGateway.Worker.Transaction.csproj", "{7EE486F6-FB2C-473D-9AE3-79DCA44F0170}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ElevaniPaymentGateway.Worker.PayAgency", "src\ElevaniPaymentGateway.Worker.PayAgency\ElevaniPaymentGateway.Worker.PayAgency.csproj", "{319F6D19-DDDE-447A-B3E0-A8A324606CB6}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -45,6 +47,10 @@ Global
 		{7EE486F6-FB2C-473D-9AE3-79DCA44F0170}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7EE486F6-FB2C-473D-9AE3-79DCA44F0170}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7EE486F6-FB2C-473D-9AE3-79DCA44F0170}.Release|Any CPU.Build.0 = Release|Any CPU
+		{319F6D19-DDDE-447A-B3E0-A8A324606CB6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{319F6D19-DDDE-447A-B3E0-A8A324606CB6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{319F6D19-DDDE-447A-B3E0-A8A324606CB6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{319F6D19-DDDE-447A-B3E0-A8A324606CB6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

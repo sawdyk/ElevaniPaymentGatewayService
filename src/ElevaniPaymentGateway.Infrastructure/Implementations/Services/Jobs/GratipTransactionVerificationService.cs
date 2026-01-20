@@ -36,84 +36,92 @@ namespace ElevaniPaymentGateway.Infrastructure.Implementations.Services.Jobs
 
         public async Task FinalizeAndVerifyTransactions() //transactions verification
         {
-            var pendingGratipTransactions = await (await _gratipTransactionQuery
-                .ListAsync(x => x.IsVerified == false && x.Status == TransactionStatus.Pending)).ToListAsync();
-
-            if (!pendingGratipTransactions.Any())
+            try
             {
-                _logger.LogInformation($"No pending transaction for finalization as at {DateTime.Now}");
-                return;
-            }
+                var pendingGratipTransactions = await (await _gratipTransactionQuery
+                    .ListAsync(x => x.IsVerified == false && x.Status == TransactionStatus.Pending)).ToListAsync();
 
-            foreach (var gratipTransaction in pendingGratipTransactions)
-            {
-                var transaction = await _transactionQuery.GetByAsync(x => x.Reference == gratipTransaction.ExternalReference);
-                if (transaction is null)
+                if (!pendingGratipTransactions.Any())
                 {
-                    _logger.LogInformation($"Transaction with reference {gratipTransaction.ExternalReference} could not be found");
-                    continue;
+                    _logger.LogInformation($"No pending transaction for finalization as at {DateTime.Now}");
+                    return;
                 }
-                var finalizeTransactionResp = await _gratipCollectionService
-                    .FinalizeTransactionAsync(new FinalizeTransactionRequest { transactionReference = gratipTransaction.TransactionReference });
-                if (finalizeTransactionResp is not null)
+
+                foreach (var gratipTransaction in pendingGratipTransactions)
                 {
-                    if (finalizeTransactionResp.data is not null)
+                    var transaction = await _transactionQuery.GetByAsync(x => x.Reference == gratipTransaction.ExternalReference);
+                    if (transaction is null)
                     {
-                        _logger.LogInformation($"tranaction reference {gratipTransaction.TransactionReference} " +
-                            $"| finalize data status => {finalizeTransactionResp.data.status}");
-
-                        //check transaction status
-                        if (finalizeTransactionResp.data.status.Equals("successful"))
+                        _logger.LogInformation($"Transaction with reference {gratipTransaction.ExternalReference} could not be found");
+                        continue;
+                    }
+                    var finalizeTransactionResp = await _gratipCollectionService
+                        .FinalizeTransactionAsync(new FinalizeTransactionRequest { transactionReference = gratipTransaction.TransactionReference });
+                    if (finalizeTransactionResp is not null)
+                    {
+                        if (finalizeTransactionResp.data is not null)
                         {
-                            gratipTransaction.IsVerified = true;
-                            gratipTransaction.Status = TransactionStatus.Completed;
+                            _logger.LogInformation($"tranaction reference {gratipTransaction.TransactionReference} " +
+                                $"| finalize data status => {finalizeTransactionResp.data.status}");
 
-                            //Update the main transaction table
-                            transaction.Status = TransactionStatus.Completed;
-                        }
-                        else
-                        {
-                            if (finalizeTransactionResp.data.status.Equals("failed") ||
-                                finalizeTransactionResp.data.status.Equals("cancelled") || finalizeTransactionResp.data.status.Equals("declined"))
+                            //check transaction status
+                            if (finalizeTransactionResp.data.status.Equals("successful"))
                             {
-                                gratipTransaction.IsVerified = false;
-                                if (finalizeTransactionResp.data.status.Equals("cancelled"))
-                                    gratipTransaction.Status = TransactionStatus.Cancelled;
-                                if (finalizeTransactionResp.data.status.Equals("declined"))
-                                    gratipTransaction.Status = TransactionStatus.Declined;
-                                if (finalizeTransactionResp.data.status.Equals("failed"))
-                                    gratipTransaction.Status = TransactionStatus.Failed;
+                                gratipTransaction.IsVerified = true;
+                                gratipTransaction.Status = TransactionStatus.Completed;
 
                                 //Update the main transaction table
-                                if (finalizeTransactionResp.data.status.Equals("cancelled"))
-                                    transaction.Status = TransactionStatus.Cancelled;
-                                if (finalizeTransactionResp.data.status.Equals("declined"))
-                                    transaction.Status = TransactionStatus.Declined;
-                                if (finalizeTransactionResp.data.status.Equals("failed"))
-                                    transaction.Status = TransactionStatus.Failed;
+                                transaction.Status = TransactionStatus.Completed;
                             }
+                            else
+                            {
+                                if (finalizeTransactionResp.data.status.Equals("failed") ||
+                                    finalizeTransactionResp.data.status.Equals("cancelled") || finalizeTransactionResp.data.status.Equals("declined"))
+                                {
+                                    gratipTransaction.IsVerified = false;
+                                    if (finalizeTransactionResp.data.status.Equals("cancelled"))
+                                        gratipTransaction.Status = TransactionStatus.Cancelled;
+                                    if (finalizeTransactionResp.data.status.Equals("declined"))
+                                        gratipTransaction.Status = TransactionStatus.Declined;
+                                    if (finalizeTransactionResp.data.status.Equals("failed"))
+                                        gratipTransaction.Status = TransactionStatus.Failed;
+
+                                    //Update the main transaction table
+                                    if (finalizeTransactionResp.data.status.Equals("cancelled"))
+                                        transaction.Status = TransactionStatus.Cancelled;
+                                    if (finalizeTransactionResp.data.status.Equals("declined"))
+                                        transaction.Status = TransactionStatus.Declined;
+                                    if (finalizeTransactionResp.data.status.Equals("failed"))
+                                        transaction.Status = TransactionStatus.Failed;
+                                }
+                            }
+
+                            gratipTransaction.UpdatedAt = DateTime.UtcNow;
+                            gratipTransaction.DateVerified = DateTime.UtcNow;
+                            gratipTransaction.UpdatedBy = "Job";
+
+                            var sqlTransaction = await _sqlTransactionService.BeginTransactionAsync();
+
+                            _gratipTransactionRepository.Update(gratipTransaction);
+                            await _gratipTransactionRepository.SaveChangesAsync();
+
+                            transaction.UpdatedAt = DateTime.UtcNow;
+                            transaction.UpdatedBy = "Job";
+
+                            _transactionRepository.Update(transaction);
+                            await _transactionRepository.SaveChangesAsync();
+
+                            await _sqlTransactionService.CommitAndDisposeTransactionAsync(sqlTransaction);
                         }
-
-                        gratipTransaction.UpdatedAt = DateTime.UtcNow;
-                        gratipTransaction.DateVerified = DateTime.UtcNow;
-                        gratipTransaction.UpdatedBy = "Job";
-
-                        var sqlTransaction = await _sqlTransactionService.BeginTransactionAsync();
-
-                        _gratipTransactionRepository.Update(gratipTransaction);
-                        await _gratipTransactionRepository.SaveChangesAsync();
-
-                        transaction.UpdatedAt = DateTime.UtcNow;
-                        transaction.UpdatedBy = "Job";
-
-                        _transactionRepository.Update(transaction);
-                        await _transactionRepository.SaveChangesAsync();
-
-                        await _sqlTransactionService.CommitAndDisposeTransactionAsync(sqlTransaction);
+                        else
+                            _logger.LogInformation($"Verification data => {JsonConvert.SerializeObject(finalizeTransactionResp.data)}");
                     }
-                    else
-                        _logger.LogInformation($"Verification data => {JsonConvert.SerializeObject(finalizeTransactionResp.data)}");
                 }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"An exception occurred while executing gratip transaction verification service - {ex.Message}");
+                _logger.LogError($"stack trace >>> {ex.StackTrace} | innver exception >>> {ex.InnerException} | source >>> {ex.Source}");
             }
         }
     }
