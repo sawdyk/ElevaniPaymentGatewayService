@@ -17,6 +17,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ElevaniPaymentGateway.Worke
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ElevaniPaymentGateway.Worker.PayAgency", "src\ElevaniPaymentGateway.Worker.PayAgency\ElevaniPaymentGateway.Worker.PayAgency.csproj", "{319F6D19-DDDE-447A-B3E0-A8A324606CB6}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ElevaniPaymentGateway.Worker.Gratip", "src\ElevaniPaymentGateway.Worker.Gratip\ElevaniPaymentGateway.Worker.Gratip.csproj", "{3390F206-0952-4638-8BA3-DD2E507D7817}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -51,6 +53,10 @@ Global
 		{319F6D19-DDDE-447A-B3E0-A8A324606CB6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{319F6D19-DDDE-447A-B3E0-A8A324606CB6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{319F6D19-DDDE-447A-B3E0-A8A324606CB6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3390F206-0952-4638-8BA3-DD2E507D7817}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3390F206-0952-4638-8BA3-DD2E507D7817}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3390F206-0952-4638-8BA3-DD2E507D7817}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3390F206-0952-4638-8BA3-DD2E507D7817}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

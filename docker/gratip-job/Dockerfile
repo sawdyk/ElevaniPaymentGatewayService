@@ -11,22 +11,22 @@ EXPOSE 8082
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
-COPY ["src/ElevaniPaymentGateway.Worker.Transaction/ElevaniPaymentGateway.Worker.Transaction.csproj", "src/ElevaniPaymentGateway.Worker.Transaction/"]
+COPY ["src/ElevaniPaymentGateway.Worker.Gratip/ElevaniPaymentGateway.Worker.Gratip.csproj", "src/ElevaniPaymentGateway.Worker.Gratip/"]
 COPY ["src/ElevaniPaymentGateway.Infrastructure/ElevaniPaymentGateway.Infrastructure.csproj", "src/ElevaniPaymentGateway.Infrastructure/"]
 COPY ["src/ElevaniPaymentGateway.Core/ElevaniPaymentGateway.Core.csproj", "src/ElevaniPaymentGateway.Core/"]
 COPY ["src/ElevaniPaymentGateway.Persistence/ElevaniPaymentGateway.Persistence.csproj", "src/ElevaniPaymentGateway.Persistence/"]
-RUN dotnet restore "./src/ElevaniPaymentGateway.Worker.Transaction/ElevaniPaymentGateway.Worker.Transaction.csproj"
+RUN dotnet restore "./src/ElevaniPaymentGateway.Worker.Gratip/ElevaniPaymentGateway.Worker.Gratip.csproj"
 COPY . .
-WORKDIR "/src/src/ElevaniPaymentGateway.Worker.Transaction"
-RUN dotnet build "./ElevaniPaymentGateway.Worker.Transaction.csproj" -c $BUILD_CONFIGURATION -o /app/build
+WORKDIR "/src/src/ElevaniPaymentGateway.Worker.Gratip"
+RUN dotnet build "./ElevaniPaymentGateway.Worker.Gratip.csproj" -c $BUILD_CONFIGURATION -o /app/build
 
 # This stage is used to publish the service project to be copied to the final stage
 FROM build AS publish
 ARG BUILD_CONFIGURATION=Release
-RUN dotnet publish "./ElevaniPaymentGateway.Worker.Transaction.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
+RUN dotnet publish "./ElevaniPaymentGateway.Worker.Gratip.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
 
 # This stage is used in production or when running from VS in regular mode (Default when not using the Debug configuration)
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
-ENTRYPOINT ["dotnet", "ElevaniPaymentGateway.Worker.Transaction.dll"]
+ENTRYPOINT ["dotnet", "ElevaniPaymentGateway.Worker.Gratip.dll"]

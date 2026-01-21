@@ -9,5 +9,10 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.Extensions.Hosting" Version="8.0.1" />
+	<PackageReference Include="Microsoft.Extensions.Hosting.WindowsServices" Version="8.0.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\ElevaniPaymentGateway.Infrastructure\ElevaniPaymentGateway.Infrastructure.csproj" />
   </ItemGroup>
 </Project>
