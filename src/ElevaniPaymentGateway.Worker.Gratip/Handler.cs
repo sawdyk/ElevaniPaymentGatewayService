@@ -4,24 +4,22 @@ using ElevaniPaymentGateway.Core.Models.Request.Gratip;
 using ElevaniPaymentGateway.Infrastructure.Interfaces.EfRepository;
 using ElevaniPaymentGateway.Infrastructure.Interfaces.ProxyClients.Gratip;
 using ElevaniPaymentGateway.Infrastructure.Interfaces.Queries;
-using ElevaniPaymentGateway.Infrastructure.Interfaces.Services.Jobs;
 using ElevaniPaymentGateway.Infrastructure.Interfaces.Services.Utilities;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 
-namespace ElevaniPaymentGateway.Infrastructure.Implementations.Services.Jobs
+namespace ElevaniPaymentGateway.Worker.Gratip
 {
-    public class GratipTransactionVerificationService : IGratipTransactionVerificationService
+    public class Handler
     {
-        private readonly ILogger<GratipTransactionVerificationService> _logger;
+        private readonly ILogger<Handler> _logger;
         private readonly IBaseRepository<Transaction> _transactionRepository;
         private readonly IBaseRepository<GratipTransaction> _gratipTransactionRepository;
         private readonly ITransactionQuery _transactionQuery;
         private readonly IGratipTransactionQuery _gratipTransactionQuery;
         private readonly IGratipCollectionService _gratipCollectionService;
         private readonly ISqlTransactionService _sqlTransactionService;
-        public GratipTransactionVerificationService(ILogger<GratipTransactionVerificationService> logger, IBaseRepository<Transaction> transactionRepository, IBaseRepository<GratipTransaction> gratipTransactionRepository,
+        public Handler(ILogger<Handler> logger, IBaseRepository<Transaction> transactionRepository, IBaseRepository<GratipTransaction> gratipTransactionRepository,
             ITransactionQuery transactionQuery, IGratipTransactionQuery gratipTransactionQuery, IGratipCollectionService gratipCollectionService,
             ISqlTransactionService sqlTransactionService)
         {
