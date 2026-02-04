@@ -73,8 +73,8 @@ namespace ElevaniPaymentGateway.Worker.Gratip
                             }
                             else
                             {
-                                if (finalizeTransactionResp.data.status.Equals("failed") ||
-                                    finalizeTransactionResp.data.status.Equals("cancelled") || finalizeTransactionResp.data.status.Equals("declined"))
+                                if (finalizeTransactionResp.data.status.Equals("failed") || finalizeTransactionResp.data.status.Equals("declined") ||
+                                    finalizeTransactionResp.data.status.Equals("cancelled") || finalizeTransactionResp.data.status.Equals("expired"))
                                 {
                                     gratipTransaction.IsVerified = false;
                                     if (finalizeTransactionResp.data.status.Equals("cancelled"))
@@ -83,6 +83,8 @@ namespace ElevaniPaymentGateway.Worker.Gratip
                                         gratipTransaction.Status = TransactionStatus.Declined;
                                     if (finalizeTransactionResp.data.status.Equals("failed"))
                                         gratipTransaction.Status = TransactionStatus.Failed;
+                                    if (finalizeTransactionResp.data.status.Equals("expired"))
+                                        gratipTransaction.Status = TransactionStatus.Failed;
 
                                     //Update the main transaction table
                                     if (finalizeTransactionResp.data.status.Equals("cancelled"))
@@ -90,6 +92,8 @@ namespace ElevaniPaymentGateway.Worker.Gratip
                                     if (finalizeTransactionResp.data.status.Equals("declined"))
                                         transaction.Status = TransactionStatus.Declined;
                                     if (finalizeTransactionResp.data.status.Equals("failed"))
+                                        transaction.Status = TransactionStatus.Failed;
+                                    if (finalizeTransactionResp.data.status.Equals("expired"))
                                         transaction.Status = TransactionStatus.Failed;
                                 }
                             }
