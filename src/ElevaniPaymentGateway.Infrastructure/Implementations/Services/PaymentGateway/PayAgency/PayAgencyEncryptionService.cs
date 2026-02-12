@@ -88,7 +88,7 @@ namespace ElevaniPaymentGateway.Infrastructure.Implementations.Services.PaymentG
             byte[] keyBytes = Encoding.UTF8.GetBytes(key);
             if (keyBytes.Length != 32)
             {
-                throw new ArgumentException("Key must be 32 bytes (32 UTF-8 characters).");
+                throw new ArgumentException("Invalid encryption key. Key must be 32 bytes (32 UTF-8 characters).");
             }
 
             byte[] decryptedBytes;

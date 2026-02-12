@@ -28,7 +28,7 @@ namespace ElevaniPaymentGateway.Core.Entities
         public string? CardCVV { get; set; }
         public string? RedirectUrl { get; set; }
         public string? WebHookUrl { get; set; }
-
+        public string? Message { get; set; }
 
         public PaymentGateways PaymentGateway { get; set; } // WemaMPGS, Gratip etc
         public TransactionStatus Status { get; set; }

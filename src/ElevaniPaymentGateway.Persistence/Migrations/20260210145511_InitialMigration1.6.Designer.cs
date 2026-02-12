@@ -4,6 +4,7 @@ using ElevaniPaymentGateway.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ElevaniPaymentGateway.Persistence.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260210145511_InitialMigration1.6")]
+    partial class InitialMigration16
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -38,7 +41,7 @@ namespace ElevaniPaymentGateway.Persistence.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
-                        .HasDefaultValue(new DateTime(2026, 2, 12, 12, 37, 55, 907, DateTimeKind.Local).AddTicks(6558));
+                        .HasDefaultValue(new DateTime(2026, 2, 10, 15, 55, 10, 425, DateTimeKind.Local).AddTicks(7398));
 
                     b.Property<string>("IPAddress")
                         .IsRequired()
@@ -354,7 +357,7 @@ namespace ElevaniPaymentGateway.Persistence.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
-                        .HasDefaultValue(new DateTime(2026, 2, 12, 12, 37, 55, 980, DateTimeKind.Local).AddTicks(4741));
+                        .HasDefaultValue(new DateTime(2026, 2, 10, 15, 55, 10, 466, DateTimeKind.Local).AddTicks(6421));
 
                     b.Property<string>("CreatedBy")
                         .HasColumnType("nvarchar(max)");
@@ -537,7 +540,7 @@ namespace ElevaniPaymentGateway.Persistence.Migrations
                     b.Property<DateTime>("DateGenerated")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
-                        .HasDefaultValue(new DateTime(2026, 2, 12, 12, 37, 56, 26, DateTimeKind.Local).AddTicks(1424));
+                        .HasDefaultValue(new DateTime(2026, 2, 10, 15, 55, 10, 482, DateTimeKind.Local).AddTicks(2710));
 
                     b.Property<DateTime?>("DateUsed")
                         .HasColumnType("datetime2");
@@ -658,9 +661,6 @@ namespace ElevaniPaymentGateway.Persistence.Migrations
 
                     b.Property<DateTime?>("LastRetryDateTime")
                         .HasColumnType("datetime2");
-
-                    b.Property<string>("Message")
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("OTPRedirectUrl")
                         .HasColumnType("nvarchar(max)");
@@ -898,9 +898,6 @@ namespace ElevaniPaymentGateway.Persistence.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<string>("Message")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("Narration")
                         .HasMaxLength(500)
                         .HasColumnType("nvarchar(500)");
@@ -972,7 +969,7 @@ namespace ElevaniPaymentGateway.Persistence.Migrations
                     b.Property<DateTime>("DateOfBirth")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
-                        .HasDefaultValue(new DateTime(2026, 2, 12, 12, 37, 56, 36, DateTimeKind.Local).AddTicks(9668));
+                        .HasDefaultValue(new DateTime(2026, 2, 10, 15, 55, 10, 486, DateTimeKind.Local).AddTicks(673));
 
                     b.Property<string>("Email")
                         .IsRequired()

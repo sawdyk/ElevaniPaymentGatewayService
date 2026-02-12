@@ -2,9 +2,12 @@
 using ElevaniPaymentGateway.Core.Entities;
 using ElevaniPaymentGateway.Core.Enums;
 using ElevaniPaymentGateway.Core.Exceptions;
+using ElevaniPaymentGateway.Core.Helpers;
 using ElevaniPaymentGateway.Core.Models.Dto;
 using ElevaniPaymentGateway.Core.Models.Request.TransactionService;
+using ElevaniPaymentGateway.Core.Models.Response.Gratip;
 using ElevaniPaymentGateway.Core.Models.Response.PayAgency;
+using ElevaniPaymentGateway.Core.Models.Response.TransactionService;
 using ElevaniPaymentGateway.Infrastructure.Interfaces.EfRepository;
 using ElevaniPaymentGateway.Infrastructure.Interfaces.Services;
 using ElevaniPaymentGateway.Infrastructure.Interfaces.Services.Helpers;
@@ -42,6 +45,7 @@ namespace ElevaniPaymentGateway.Infrastructure.Implementations.Services
                 transaction.LastName = request.LastName;
                 transaction.Email = request.Email;
                 transaction.PhoneNumber = request.PhoneNumber;
+                transaction.Message = response.message;
 
                 transaction.City = request.City;
                 transaction.State = request.State;
@@ -53,22 +57,7 @@ namespace ElevaniPaymentGateway.Infrastructure.Implementations.Services
                 transaction.CardCVV = "***"; //request.CardCVV
                 transaction.RedirectUrl = request.RedirectUrl;
                 transaction.WebHookUrl = "";
-
-                if (response.status.ToLower().Equals("failed"))
-                    transaction.Status = TransactionStatus.Failed;
-                if (response.status.ToLower().Equals("success"))
-                    transaction.Status = TransactionStatus.Completed;
-                if (response.status.ToLower().Equals("init"))
-                    transaction.Status = TransactionStatus.Init;
-                if (response.status.ToLower().Equals("pending"))
-                    transaction.Status = TransactionStatus.Pending;
-                if (response.status.ToLower().Equals("redirect"))
-                    transaction.Status = TransactionStatus.Redirect;
-                if (response.status.ToLower().Equals("blocked"))
-                    transaction.Status = TransactionStatus.Blocked;
-                if (response.status.ToLower().Equals("abandoned"))
-                    transaction.Status = TransactionStatus.Abandoned;
-
+                transaction.Status = StringHelpers.FormatPayAgencyStatus(response.status); 
                 transaction.PaymentGateway = PaymentGateways.PAYAGENCY;
                 transaction.CreatedBy = "System";
 

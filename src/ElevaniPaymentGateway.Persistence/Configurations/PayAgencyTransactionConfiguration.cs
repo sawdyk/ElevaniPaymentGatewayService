@@ -14,6 +14,8 @@ namespace ElevaniPaymentGateway.Persistence.Configurations
 
             builder.Property(entity => entity.Reference).IsRequired().HasMaxLength(200);
 
+            builder.Property(entity => entity.TransactionReference).IsRequired().HasMaxLength(200);
+
             builder.Property(entity => entity.FirstName).IsRequired(false).HasMaxLength(200);
 
             builder.Property(entity => entity.LastName).IsRequired(false).HasMaxLength(200);
@@ -53,6 +55,8 @@ namespace ElevaniPaymentGateway.Persistence.Configurations
             builder.Property(entity => entity.OTPRedirectUrl).IsRequired(false);
 
             builder.Property(entity => entity.WebHookUrl).IsRequired(false);
+
+            builder.Property(entity => entity.Message).IsRequired(false);
 
             builder.Property(entity => entity.IsVerified).IsRequired().HasDefaultValue(null);
 

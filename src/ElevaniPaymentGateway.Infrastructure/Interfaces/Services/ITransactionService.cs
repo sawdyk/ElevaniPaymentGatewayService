@@ -9,12 +9,11 @@ namespace ElevaniPaymentGateway.Infrastructure.Interfaces.Services
 {
     public interface ITransactionService : IAutoDependencyServices
     {
-        Task<GenericResponse<TransactionResponse>> InitiateTransactionViaPaymentGatewayAsync(TransactionRequest request);
-        Task<GenericResponse<TransactionDto>> StatusAsync(string reference);
-        Task<GenericPagedResponse<TransactionDto>> MerchantAsync(PaginationParams paginationParams);
+        Task<GenericResponse<TransactionResponse>> InitiateGratipPaymentCollectionAsync(TransactionRequest request);
+        Task<GenericResponse<PATransactionResponse>> InitiatePayAgencyServerToServerAsync(PAEncryptedTransactionRequest encryptedRequest);
+
+        Task<GenericResponse<MerchantTransactionDto>> StatusAsync(string reference);
+        Task<GenericPagedResponse<MerchantTransactionDto>> MerchantAsync(PaginationParams paginationParams);
         Task<GenericPagedResponse<TransactionDto>> MerchantIdAsync(string merchantId, PaginationParams paginationParams);
-
-
-        Task<GenericResponse<PATransactionResponse>> InitiateTransactionViaServerAsync(string encryptedRequest);
     }
 }

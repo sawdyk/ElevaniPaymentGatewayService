@@ -1,4 +1,5 @@
 ﻿using Asp.Versioning;
+using ElevaniPaymentGateway.Infrastructure.Helpers;
 using ElevaniPaymentGateway.Infrastructure.Implementations.Services.PaymentGateway.PayAgency;
 using ElevaniPaymentGateway.Infrastructure.Interfaces.Services.PaymentGateway.PayAgency;
 using Microsoft.AspNetCore.Mvc;
@@ -12,10 +13,13 @@ namespace ElevaniPaymentGateway.API.Transaction.Controllers
     {
         private readonly ILogger<TestController> logger;
         IPayAgencyPaymentService _payAgencyPaymentService;
-        public TestController(ILogger<TestController> logger, IPayAgencyPaymentService payAgencyPaymentService)
+        ValidationHelper _ValidationHelper;
+        public TestController(ILogger<TestController> logger, IPayAgencyPaymentService payAgencyPaymentService,
+            ValidationHelper validationHelper)
         {
             this.logger = logger;
             _payAgencyPaymentService = payAgencyPaymentService;
+            _ValidationHelper = validationHelper;
         }
 
         [HttpPost("encrypt")]
@@ -28,7 +32,7 @@ namespace ElevaniPaymentGateway.API.Transaction.Controllers
 
             var encryptedData = PayAgencyEncryptionService.EncryptData(request, "2542b322a40ada01489c5491fe379512");
 
-            logger.LogInformation($"encypted data >>> {encryptedData}");
+            logger.LogInformation($"encrypted data >>> {encryptedData}");
 
             return Ok(encryptedData);
         }
@@ -48,16 +52,29 @@ namespace ElevaniPaymentGateway.API.Transaction.Controllers
             return Ok(encryptedData);
         }
 
-        [HttpPost("initiate")]
-        public async Task<IActionResult> Initiate(string request)
-        {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest();
-            }
+        //[HttpPost("validate")]
+        //public async Task<IActionResult> validate(string val)
+        //{
+        //    if (!ModelState.IsValid)
+        //    {
+        //        return BadRequest();
+        //    }
 
-            var response = await _payAgencyPaymentService.InitiateTransactionAsync("", request);
-            return Ok(response);
-        }
+        //    var response =  _ValidationHelper.ValidateIPv4(val);
+        //    return Ok(response);
+        //}
+
+
+        //[HttpPost("initiate")]
+        //public async Task<IActionResult> Initiate(string request)
+        //{
+        //    if (!ModelState.IsValid)
+        //    {
+        //        return BadRequest();
+        //    }
+
+        //    var response = await _payAgencyPaymentService.ServerToServerAsync(request);
+        //    return Ok(response);
+        //}
     }
 }

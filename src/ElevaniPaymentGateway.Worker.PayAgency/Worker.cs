@@ -20,15 +20,15 @@ namespace ElevaniPaymentGateway.Worker.PayAgency
         {
             if (_logger.IsEnabled(LogLevel.Information))
             {
-                _logger.LogInformation("Pay agency worker running at: {time}", DateTimeOffset.Now);
+                _logger.LogInformation("Pay agency worker service running at: {time}", DateTimeOffset.Now);
             }
 
-            while (!stoppingToken.IsCancellationRequested)
+            while (true)
             {
                 using (var scope = _serviceProvider.CreateScope())
                 {
                     var transactionVerificationService = scope.ServiceProvider.GetService<Handler>();
-                    await transactionVerificationService.FinalizeAndVerifyTransactions();
+                    await transactionVerificationService.VerifyTransaction();
                 }
 
                 await Task.Delay(TimeSpan.FromSeconds(_backgroundJobConfig.PayAgencyTransactionVerificationTaskDelay), stoppingToken);

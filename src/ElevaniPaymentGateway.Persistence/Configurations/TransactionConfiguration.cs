@@ -54,6 +54,8 @@ namespace ElevaniPaymentGateway.Persistence.Configurations
 
             builder.Property(entity => entity.Status).HasConversion<string>();
 
+            builder.Property(entity => entity.Message).IsRequired(false);
+
 
             builder.HasIndex(entity => new { entity.MerchantId, entity.Reference }).IsUnique();
         }

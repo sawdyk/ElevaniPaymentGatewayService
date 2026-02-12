@@ -22,6 +22,8 @@ namespace ElevaniPaymentGateway.Core.Helpers.AutoMapper
             CreateMap<PagedResult<GratipTransaction>, PagedResult<GratipTransactionDto>>();
             CreateMap<PayAgencyTransaction, PayAgencyTransactionDto>();
             CreateMap<PagedResult<PayAgencyTransaction>, PagedResult<PayAgencyTransactionDto>>();
+            CreateMap<Transaction, MerchantTransactionDto>();
+            CreateMap<PagedResult<Transaction>, PagedResult<MerchantTransactionDto>>();
 
             CreateMap<PATransactionRequest, PayAgencyTransactionRequest>()
                 .ForMember(dest => dest.first_name, opt => opt.MapFrom(src => src.FirstName))

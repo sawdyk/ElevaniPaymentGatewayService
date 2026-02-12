@@ -1,6 +1,6 @@
 ﻿using ElevaniPaymentGateway.Core.Entities;
 using ElevaniPaymentGateway.Core.Enums;
-using ElevaniPaymentGateway.Core.Models.Request.Gratip;
+using ElevaniPaymentGateway.Core.Helpers;
 using ElevaniPaymentGateway.Infrastructure.Interfaces.EfRepository;
 using ElevaniPaymentGateway.Infrastructure.Interfaces.ProxyClients.PayAgency;
 using ElevaniPaymentGateway.Infrastructure.Interfaces.Queries;
@@ -19,8 +19,9 @@ namespace ElevaniPaymentGateway.Worker.PayAgency
         private readonly IPayAgencyTransactionQuery _payAgencyTransactionQuery;
         private readonly IPayAgencyCollectionService _payAgencyCollectionService;
         private readonly ISqlTransactionService _sqlTransactionService;
-        public Handler(ILogger<Handler> logger, IBaseRepository<Transaction> transactionRepository, IBaseRepository<PayAgencyTransaction> payAgencyTransactionRepository,
-            ITransactionQuery transactionQuery, IPayAgencyTransactionQuery payAgencyTransactionQuery, IPayAgencyCollectionService payAgencyCollectionService,
+        public Handler(ILogger<Handler> logger, IBaseRepository<Transaction> transactionRepository, 
+            IBaseRepository<PayAgencyTransaction> payAgencyTransactionRepository, ITransactionQuery transactionQuery, 
+            IPayAgencyTransactionQuery payAgencyTransactionQuery, IPayAgencyCollectionService payAgencyCollectionService,
             ISqlTransactionService sqlTransactionService)
         {
             _logger = logger;
@@ -38,8 +39,7 @@ namespace ElevaniPaymentGateway.Worker.PayAgency
             {
                 var pendingTransactions = await (await _payAgencyTransactionQuery
                     .ListAsync(x => x.IsVerified == false 
-                    && (x.Status == TransactionStatus.Init) || (x.Status == TransactionStatus.Pending) || (x.Status == TransactionStatus.Redirect)))
-                    .ToListAsync();
+                    && (x.Status == TransactionStatus.Init) || (x.Status == TransactionStatus.Pending) || (x.Status == TransactionStatus.Redirect))).ToListAsync();
 
                 if (!pendingTransactions.Any())
                 {
@@ -47,76 +47,69 @@ namespace ElevaniPaymentGateway.Worker.PayAgency
                     return;
                 }
 
-                //foreach (var payAgencyTransaction in pendingTransactions)
-                //{
-                //    var transaction = await _transactionQuery.GetByAsync(x => x.Reference == gratipTransaction.ExternalReference);
-                //    if (transaction is null)
-                //    {
-                //        _logger.LogInformation($"Transaction with reference {gratipTransaction.ExternalReference} could not be found");
-                //        continue;
-                //    }
-                //    var finalizeTransactionResp = await _gratipCollectionService
-                //        .FinalizeTransactionAsync(new FinalizeTransactionRequest { transactionReference = gratipTransaction.TransactionReference });
-                //    if (finalizeTransactionResp is not null)
-                //    {
-                //        if (finalizeTransactionResp.data is not null)
-                //        {
-                //            _logger.LogInformation($"tranaction reference {gratipTransaction.TransactionReference} " +
-                //                $"| finalize data status => {finalizeTransactionResp.data.status}");
+                foreach (var payAgencyTransaction in pendingTransactions)
+                {
+                    var transaction = await _transactionQuery.GetByAsync(x => x.Reference == payAgencyTransaction.Reference);
+                    if (transaction is null)
+                    {
+                        _logger.LogInformation($"Transaction with reference {payAgencyTransaction.Reference} could not be found");
+                        continue;
+                    }
+                    var transactionStatusResp = await _payAgencyCollectionService.TransactionStatusAsync(payAgencyTransaction.Reference);
+                    if (transactionStatusResp is not null)
+                    {
+                        if (transactionStatusResp.data is not null)
+                        {
+                            _logger.LogInformation($"Transaction reference {payAgencyTransaction.Reference} " +
+                                $"| Pay agency reference {payAgencyTransaction.TransactionReference} | Transaction status {transactionStatusResp.status}");
 
-                //            //check transaction status
-                //            if (finalizeTransactionResp.data.status.Equals("successful"))
-                //            {
-                //                gratipTransaction.IsVerified = true;
-                //                gratipTransaction.Status = TransactionStatus.Completed;
+                            //check transaction status
+                            if (transactionStatusResp.status.ToLower().Equals("success"))
+                            {
+                                //Pay agency transaction table
+                                payAgencyTransaction.IsVerified = true;
+                                payAgencyTransaction.Message = transactionStatusResp.message;
+                                payAgencyTransaction.Status = TransactionStatus.Completed;
 
-                //                //Update the main transaction table
-                //                transaction.Status = TransactionStatus.Completed;
-                //            }
-                //            else
-                //            {
-                //                if (finalizeTransactionResp.data.status.Equals("failed") ||
-                //                    finalizeTransactionResp.data.status.Equals("cancelled") || finalizeTransactionResp.data.status.Equals("declined"))
-                //                {
-                //                    gratipTransaction.IsVerified = false;
-                //                    if (finalizeTransactionResp.data.status.Equals("cancelled"))
-                //                        gratipTransaction.Status = TransactionStatus.Cancelled;
-                //                    if (finalizeTransactionResp.data.status.Equals("declined"))
-                //                        gratipTransaction.Status = TransactionStatus.Declined;
-                //                    if (finalizeTransactionResp.data.status.Equals("failed"))
-                //                        gratipTransaction.Status = TransactionStatus.Failed;
+                                //Main transaction table
+                                transaction.Status = TransactionStatus.Completed;
+                                transaction.Message = transactionStatusResp.message;
+                            }
+                            else
+                            {
+                                //Pay agency transaction table
+                                payAgencyTransaction.IsVerified = false;
+                                payAgencyTransaction.Message = transactionStatusResp.message;
+                                payAgencyTransaction.Status = StringHelpers.FormatPayAgencyStatus(transactionStatusResp.status);
 
-                //                    //Update the main transaction table
-                //                    if (finalizeTransactionResp.data.status.Equals("cancelled"))
-                //                        transaction.Status = TransactionStatus.Cancelled;
-                //                    if (finalizeTransactionResp.data.status.Equals("declined"))
-                //                        transaction.Status = TransactionStatus.Declined;
-                //                    if (finalizeTransactionResp.data.status.Equals("failed"))
-                //                        transaction.Status = TransactionStatus.Failed;
-                //                }
-                //            }
+                                //Main transaction table
+                                transaction.Message = transactionStatusResp.message;
+                                transaction.Status = StringHelpers.FormatPayAgencyStatus(transactionStatusResp.status);
+                            }
 
-                //            gratipTransaction.UpdatedAt = DateTime.UtcNow;
-                //            gratipTransaction.DateVerified = DateTime.UtcNow;
-                //            gratipTransaction.UpdatedBy = "Job";
+                            //Update the pay agency transaction table
+                            payAgencyTransaction.UpdatedAt = DateTime.UtcNow;
+                            payAgencyTransaction.DateVerified = DateTime.UtcNow;
+                            payAgencyTransaction.UpdatedBy = "Job";
 
-                //            var sqlTransaction = await _sqlTransactionService.BeginTransactionAsync();
+                            var sqlTransaction = await _sqlTransactionService.BeginTransactionAsync();
 
-                //            _gratipTransactionRepository.Update(gratipTransaction);
-                //            await _gratipTransactionRepository.SaveChangesAsync();
+                            _payAgencyTransactionRepository.Update(payAgencyTransaction);
+                            await _payAgencyTransactionRepository.SaveChangesAsync();
 
-                //            transaction.UpdatedAt = DateTime.UtcNow;
-                //            transaction.UpdatedBy = "Job";
+                            //Update the main transaction table
+                            transaction.UpdatedAt = DateTime.UtcNow;
+                            transaction.UpdatedBy = "Job";
 
-                //            _transactionRepository.Update(transaction);
-                //            await _transactionRepository.SaveChangesAsync();
+                            _transactionRepository.Update(transaction);
+                            await _transactionRepository.SaveChangesAsync();
 
-                //            await _sqlTransactionService.CommitAndDisposeTransactionAsync(sqlTransaction);
-                //        }
-                //        else
-                //            _logger.LogInformation($"Verification data => {JsonConvert.SerializeObject(finalizeTransactionResp.data)}");
-                //    }
-                //}
+                            await _sqlTransactionService.CommitAndDisposeTransactionAsync(sqlTransaction);
+                        }
+                        else
+                            _logger.LogInformation($"Verification data => {JsonConvert.SerializeObject(transactionStatusResp.data)}");
+                    }
+                }
             }
             catch (Exception ex)
             {

@@ -7,7 +7,8 @@ namespace ElevaniPaymentGateway.Core.Entities
     public class PayAgencyTransaction : BaseEntity
     {
         public Guid TransactionId { get; set; }
-        public string Reference { get; set; } //transaction reference - order_id
+        public string Reference { get; set; } //merchant reference - order_id
+        public string TransactionReference { get; set; } //pay agency transaction reference - transaction_id
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public string Email { get; set; }
@@ -28,6 +29,7 @@ namespace ElevaniPaymentGateway.Core.Entities
         public string RedirectUrl { get; set; }
         public string? OTPRedirectUrl { get; set; }
         public string? WebHookUrl { get; set; }
+        public string? Message { get; set; }
 
         public bool IsVerified { get; set; } = false;
         public DateTime? DateVerified { get; set; } // date transaction was verified

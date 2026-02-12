@@ -1,4 +1,7 @@
-﻿using System.ComponentModel;
+﻿using ElevaniPaymentGateway.Core.Enums;
+using ElevaniPaymentGateway.Core.Models.Response.Gratip;
+using ElevaniPaymentGateway.Core.Models.Response.TransactionService;
+using System.ComponentModel;
 using System.Reflection;
 using System.Text.RegularExpressions;
 
@@ -47,15 +50,27 @@ namespace ElevaniPaymentGateway.Core.Helpers
                 cardNumber = cardNumber.Remove(6, 9).Insert(4, "*********"); 
             if (cardNumber.Length == 20)
                 cardNumber = cardNumber.Remove(6, 10).Insert(4, "**********");
-
             return cardNumber;
         }
 
-        public static bool IsValidIPv4Address(string ipAddress)
+        public static TransactionStatus FormatPayAgencyStatus(string status)
         {
-            string ipAddressRegex = @"^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$";
-
-            return Regex.IsMatch(ipAddress, ipAddressRegex);
+            if (status.ToLower().Equals("failed"))
+                return TransactionStatus.Failed;
+            else if (status.ToLower().Equals("success"))
+                return TransactionStatus.Completed;
+            else if (status.ToLower().Equals("init"))
+                return TransactionStatus.Init;
+            else if (status.ToLower().Equals("pending"))
+                return TransactionStatus.Pending;
+            else if (status.ToLower().Equals("redirect"))
+                return TransactionStatus.Redirect;
+            else if (status.ToLower().Equals("blocked"))
+                return TransactionStatus.Blocked;
+            else if (status.ToLower().Equals("abandoned"))
+                return TransactionStatus.Abandoned;
+            else
+                return default;
         }
     }
 }

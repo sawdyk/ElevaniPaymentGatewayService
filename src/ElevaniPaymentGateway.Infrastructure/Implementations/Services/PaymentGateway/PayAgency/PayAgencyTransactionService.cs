@@ -1,12 +1,15 @@
-﻿using ElevaniPaymentGateway.Core.Constants;
+﻿using ElevaniPaymentGateway.Core.Configs;
+using ElevaniPaymentGateway.Core.Constants;
 using ElevaniPaymentGateway.Core.Entities;
 using ElevaniPaymentGateway.Core.Enums;
 using ElevaniPaymentGateway.Core.Exceptions;
+using ElevaniPaymentGateway.Core.Helpers;
 using ElevaniPaymentGateway.Core.Models.Request.TransactionService;
 using ElevaniPaymentGateway.Core.Models.Response.PayAgency;
 using ElevaniPaymentGateway.Infrastructure.Interfaces.EfRepository;
 using ElevaniPaymentGateway.Infrastructure.Interfaces.Services.PaymentGateway.PayAgency;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 
 namespace ElevaniPaymentGateway.Infrastructure.Implementations.Services.PaymentGateway.PayAgency
 {
@@ -14,11 +17,13 @@ namespace ElevaniPaymentGateway.Infrastructure.Implementations.Services.PaymentG
     {
         private readonly ILogger<PayAgencyTransactionService> _logger;
         private readonly IBaseRepository<PayAgencyTransaction> _payAgencyTransactionRepository;
+        private readonly PayAgencyConfig _payAgencyConfig;
         public PayAgencyTransactionService(ILogger<PayAgencyTransactionService> logger, 
-            IBaseRepository<PayAgencyTransaction> payAgencyTransactionRepository)
+            IBaseRepository<PayAgencyTransaction> payAgencyTransactionRepository, IOptions<PayAgencyConfig> payAgencyConfig)
         {
             _logger = logger;
             _payAgencyTransactionRepository = payAgencyTransactionRepository;
+            _payAgencyConfig = payAgencyConfig.Value;
         }
 
         public async Task LogPayAgencyTransactionsAsync(Guid transactionId, PATransactionRequest request, PayAgencyTransactionResponse response)
@@ -29,6 +34,7 @@ namespace ElevaniPaymentGateway.Infrastructure.Implementations.Services.PaymentG
 
                 payAgencyTransaction.TransactionId = transactionId;
                 payAgencyTransaction.Reference = request.Reference;
+                payAgencyTransaction.TransactionReference = response.data.transaction_id;
                 payAgencyTransaction.Currency = request.Currency;
                 payAgencyTransaction.Amount = request.Amount;
                 payAgencyTransaction.Country = request.Country;
@@ -37,33 +43,27 @@ namespace ElevaniPaymentGateway.Infrastructure.Implementations.Services.PaymentG
                 payAgencyTransaction.LastName = request.LastName;
                 payAgencyTransaction.Email = request.Email;
                 payAgencyTransaction.PhoneNumber = request.PhoneNumber;
+                payAgencyTransaction.Address = request.Address;
 
                 payAgencyTransaction.City = request.City;
                 payAgencyTransaction.State = request.State;
                 payAgencyTransaction.Zip = request.Zip;
-                payAgencyTransaction.IPAddress = request.IPAddress;
+                payAgencyTransaction.IPAddress = request.IPAddress; //use the servers IP address
                 payAgencyTransaction.CardNumber = $"{request.CardNumber.Substring(0, 6)}**********";
                 payAgencyTransaction.CardExpiryMonth = "**"; //request.CardExpiryMonth;
                 payAgencyTransaction.CardExpiryYear = "****"; //request.CardExpiryYear;
                 payAgencyTransaction.CardCVV = "***"; //request.CardCVV
                 payAgencyTransaction.RedirectUrl = request.RedirectUrl;
+                payAgencyTransaction.OTPRedirectUrl = response is null ? "" : response.redirect_url;
+                payAgencyTransaction.Message = response is null ? "" : response.message;
                 payAgencyTransaction.WebHookUrl = "";
-
-                if (response.status.ToLower().Equals("failed"))
-                    payAgencyTransaction.Status = TransactionStatus.Failed;
-                if (response.status.ToLower().Equals("success"))
-                    payAgencyTransaction.Status = TransactionStatus.Completed;
-                if (response.status.ToLower().Equals("init"))
-                    payAgencyTransaction.Status = TransactionStatus.Init;
-                if (response.status.ToLower().Equals("pending"))
-                    payAgencyTransaction.Status = TransactionStatus.Pending;
-                if (response.status.ToLower().Equals("redirect"))
-                    payAgencyTransaction.Status = TransactionStatus.Redirect;
-                if (response.status.ToLower().Equals("blocked"))
-                    payAgencyTransaction.Status = TransactionStatus.Blocked;
-                if (response.status.ToLower().Equals("abandoned"))
-                    payAgencyTransaction.Status = TransactionStatus.Abandoned;
-
+                payAgencyTransaction.Status = StringHelpers.FormatPayAgencyStatus(response.status);
+                if (payAgencyTransaction.Status == TransactionStatus.Completed)
+                {
+                    payAgencyTransaction.IsVerified = true;
+                    payAgencyTransaction.DateVerified = DateTime.Now;
+                }
+               
                 _payAgencyTransactionRepository.Add(payAgencyTransaction);
                 await _payAgencyTransactionRepository.SaveChangesAsync();
             }
