@@ -54,10 +54,10 @@ namespace ElevaniPaymentGateway.Infrastructure.Helpers
 
             if (string.IsNullOrEmpty(request.FirstName) || string.IsNullOrEmpty(request.LastName) || string.IsNullOrEmpty(request.Email)
                 || string.IsNullOrEmpty(request.Address) || string.IsNullOrEmpty(request.Country) || string.IsNullOrEmpty(request.City)
-                || string.IsNullOrEmpty(request.State) || string.IsNullOrEmpty(request.Zip) || string.IsNullOrEmpty(request.IPAddress)
-                || string.IsNullOrEmpty(request.PhoneNumber) || string.IsNullOrEmpty(request.Currency) || string.IsNullOrEmpty(request.CardNumber)
-                || string.IsNullOrEmpty(request.CardExpiryYear) || string.IsNullOrEmpty(request.CardExpiryMonth) || string.IsNullOrEmpty(request.CardCVV)
-                || string.IsNullOrEmpty(request.RedirectUrl) || string.IsNullOrEmpty(request.Reference) || string.IsNullOrEmpty(request.Description))
+                || string.IsNullOrEmpty(request.State) || string.IsNullOrEmpty(request.Zip) || string.IsNullOrEmpty(request.PhoneNumber) 
+                || string.IsNullOrEmpty(request.Currency) || string.IsNullOrEmpty(request.CardNumber) || string.IsNullOrEmpty(request.CardExpiryYear) 
+                || string.IsNullOrEmpty(request.CardExpiryMonth) || string.IsNullOrEmpty(request.CardCVV)
+                || string.IsNullOrEmpty(request.Reference) || string.IsNullOrEmpty(request.Description))
                 throw new DataValidationException($"Contains one or more null or empty values");
           
             if (request.FirstName.Any(ch => !char.IsLetterOrDigit(ch)))
@@ -65,9 +65,7 @@ namespace ElevaniPaymentGateway.Infrastructure.Helpers
             if (request.LastName.Any(ch => !char.IsLetterOrDigit(ch)))
                 throw new DataValidationException($"{nameof(request.LastName)} contains special characters");
             if (IsValidEmail(request.Email) is false)
-                throw new DataValidationException($"{nameof(request.Email)} is not a valid email address");
-            if (ValidateIPv4(request.IPAddress) is false)
-                throw new DataValidationException($"{nameof(request.IPAddress)} is an invalid IP address");
+                throw new DataValidationException($"{nameof(request.Email)} is not a valid email address"); 
             if (request.Country.Length > 3 || request.Country.Length < 2)
                 throw new DataValidationException($"Invalid {nameof(request.Country)}");
             if (request.Amount <= 0)

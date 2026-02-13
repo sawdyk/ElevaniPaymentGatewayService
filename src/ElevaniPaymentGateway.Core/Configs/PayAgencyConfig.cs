@@ -9,5 +9,6 @@
         public string Status { get; set; }
         public string MerchantEncryptionKey { get; set; }
         public string IPAddress { get; set; }
+        public string RedirectUrl { get; set; }
     }
 }

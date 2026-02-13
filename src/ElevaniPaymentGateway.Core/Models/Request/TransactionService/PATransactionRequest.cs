@@ -12,7 +12,7 @@ namespace ElevaniPaymentGateway.Core.Models.Request.TransactionService
         public string City { get; set; }
         public string State { get; set; }
         public string Zip { get; set; }
-        public string IPAddress { get; set; }
+        //public string IPAddress { get; set; }
         public string PhoneNumber { get; set; }
         public decimal Amount { get; set; }
         public string Currency { get; set; }
@@ -20,7 +20,7 @@ namespace ElevaniPaymentGateway.Core.Models.Request.TransactionService
         public string CardExpiryMonth { get; set; }
         public string CardExpiryYear { get; set; }
         public string CardCVV { get; set; }
-        public string RedirectUrl { get; set; }
+        //public string RedirectUrl { get; set; }
         public string Reference { get; set; } //transaction reference - order_id
         public string Description { get; set; }
         //public string webhook_url { get; set; }

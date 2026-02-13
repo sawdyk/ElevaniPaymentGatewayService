@@ -75,6 +75,8 @@ namespace ElevaniPaymentGateway.Infrastructure.Implementations.Services.PaymentG
                 if (existingReference is not null) throw new GenericException("Duplicate reference exist");
 
                 var payAgencytTransRequest = _mapper.Map<PayAgencyTransactionRequest>(merchantRequest);
+                payAgencytTransRequest.ip_address = _payAgencyConfig.IPAddress;
+                payAgencytTransRequest.redirect_url = _payAgencyConfig.RedirectUrl;
 
                 var payAgencyRequest = JsonConvert.SerializeObject(payAgencytTransRequest);
                 string payAgencyEncryptedRequest = PayAgencyEncryptionService.EncryptData(payAgencyRequest, _payAgencyConfig.EncryptionKey);

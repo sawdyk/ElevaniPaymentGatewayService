@@ -15,7 +15,6 @@ namespace ElevaniPaymentGateway.Core.Models.Dto
         public string? LastName { get; set; }
         public string? Email { get; set; }
         public string? PhoneNumber { get; set; }
-
         public string? City { get; set; }
         public string? State { get; set; }
         public string? Zip { get; set; }
@@ -27,7 +26,6 @@ namespace ElevaniPaymentGateway.Core.Models.Dto
         public string? RedirectUrl { get; set; }
         public string? WebHookUrl { get; set; }
         public string? Message { get; set; }
-
         public PaymentGateways PaymentGateway { get; set; }
         public TransactionStatus Status { get; set; }
         public DateTime CreatedAt { get; set; }
@@ -53,13 +51,10 @@ namespace ElevaniPaymentGateway.Core.Models.Dto
         public string? City { get; set; }
         public string? State { get; set; }
         public string? Zip { get; set; }
-        public string? IPAddress { get; set; }
         public string? CardNumber { get; set; }
         public string? CardExpiryMonth { get; set; }
         public string? CardExpiryYear { get; set; }
         public string? CardCVV { get; set; }
-        public string? RedirectUrl { get; set; }
-        public string? WebHookUrl { get; set; }
         public string? Message { get; set; }
         public TransactionStatus Status { get; set; }
         public DateTime CreatedAt { get; set; }

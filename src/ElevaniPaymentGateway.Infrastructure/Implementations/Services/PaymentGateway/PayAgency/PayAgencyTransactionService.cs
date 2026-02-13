@@ -44,16 +44,15 @@ namespace ElevaniPaymentGateway.Infrastructure.Implementations.Services.PaymentG
                 payAgencyTransaction.Email = request.Email;
                 payAgencyTransaction.PhoneNumber = request.PhoneNumber;
                 payAgencyTransaction.Address = request.Address;
-
                 payAgencyTransaction.City = request.City;
                 payAgencyTransaction.State = request.State;
                 payAgencyTransaction.Zip = request.Zip;
-                payAgencyTransaction.IPAddress = request.IPAddress; //use the servers IP address
+                payAgencyTransaction.IPAddress = _payAgencyConfig.IPAddress; //use the servers IP address
                 payAgencyTransaction.CardNumber = $"{request.CardNumber.Substring(0, 6)}**********";
                 payAgencyTransaction.CardExpiryMonth = "**"; //request.CardExpiryMonth;
                 payAgencyTransaction.CardExpiryYear = "****"; //request.CardExpiryYear;
                 payAgencyTransaction.CardCVV = "***"; //request.CardCVV
-                payAgencyTransaction.RedirectUrl = request.RedirectUrl;
+                payAgencyTransaction.RedirectUrl = _payAgencyConfig.RedirectUrl;
                 payAgencyTransaction.OTPRedirectUrl = response is null ? "" : response.redirect_url;
                 payAgencyTransaction.Message = response is null ? "" : response.message;
                 payAgencyTransaction.WebHookUrl = "";

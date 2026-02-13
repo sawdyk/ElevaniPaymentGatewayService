@@ -34,7 +34,7 @@ namespace ElevaniPaymentGateway.Core.Helpers.AutoMapper
                 .ForMember(dest => dest.city, opt => opt.MapFrom(src => src.City))
                 .ForMember(dest => dest.state, opt => opt.MapFrom(src => src.State))
                 .ForMember(dest => dest.zip, opt => opt.MapFrom(src => src.Zip))
-                .ForMember(dest => dest.ip_address, opt => opt.MapFrom(src => src.IPAddress))
+                //.ForMember(dest => dest.ip_address, opt => opt.MapFrom(src => src.IPAddress))
                 .ForMember(dest => dest.phone_number, opt => opt.MapFrom(src => src.PhoneNumber))
                 .ForMember(dest => dest.amount, opt => opt.MapFrom(src => src.Amount))
                 .ForMember(dest => dest.currency, opt => opt.MapFrom(src => src.Currency))
@@ -42,7 +42,7 @@ namespace ElevaniPaymentGateway.Core.Helpers.AutoMapper
                 .ForMember(dest => dest.card_expiry_month, opt => opt.MapFrom(src => src.CardExpiryMonth))
                 .ForMember(dest => dest.card_expiry_year, opt => opt.MapFrom(src => src.CardExpiryYear))
                 .ForMember(dest => dest.card_cvv, opt => opt.MapFrom(src => src.CardCVV))
-                .ForMember(dest => dest.redirect_url, opt => opt.MapFrom(src => src.RedirectUrl))
+                //.ForMember(dest => dest.redirect_url, opt => opt.MapFrom(src => src.RedirectUrl))
                 .ForMember(dest => dest.order_id, opt => opt.MapFrom(src => src.Reference));
         }
     }

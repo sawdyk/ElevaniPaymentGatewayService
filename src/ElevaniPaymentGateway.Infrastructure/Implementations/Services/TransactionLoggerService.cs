@@ -1,17 +1,17 @@
-﻿using ElevaniPaymentGateway.Core.Constants;
+﻿using ElevaniPaymentGateway.Core.Configs;
+using ElevaniPaymentGateway.Core.Constants;
 using ElevaniPaymentGateway.Core.Entities;
 using ElevaniPaymentGateway.Core.Enums;
 using ElevaniPaymentGateway.Core.Exceptions;
 using ElevaniPaymentGateway.Core.Helpers;
 using ElevaniPaymentGateway.Core.Models.Dto;
 using ElevaniPaymentGateway.Core.Models.Request.TransactionService;
-using ElevaniPaymentGateway.Core.Models.Response.Gratip;
 using ElevaniPaymentGateway.Core.Models.Response.PayAgency;
-using ElevaniPaymentGateway.Core.Models.Response.TransactionService;
 using ElevaniPaymentGateway.Infrastructure.Interfaces.EfRepository;
 using ElevaniPaymentGateway.Infrastructure.Interfaces.Services;
 using ElevaniPaymentGateway.Infrastructure.Interfaces.Services.Helpers;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 
 namespace ElevaniPaymentGateway.Infrastructure.Implementations.Services
 {
@@ -21,13 +21,15 @@ namespace ElevaniPaymentGateway.Infrastructure.Implementations.Services
         private readonly IBaseRepository<Transaction> _transactionRepository;
         private MerchantContextDto _merchantContext;
         private readonly IPaymentHttpContextHelperService _paymentHttpContextHelperService;
+        private readonly PayAgencyConfig _payAgencyConfig;
         public TransactionLoggerService(ILogger<TransactionService> logger, IBaseRepository<Transaction> transactionRepository,
-            IPaymentHttpContextHelperService paymentHttpContextHelperService)
+            IPaymentHttpContextHelperService paymentHttpContextHelperService, IOptions<PayAgencyConfig> payAgencyConfig)
         {
             _logger = logger;
             _transactionRepository = transactionRepository;
             _paymentHttpContextHelperService = paymentHttpContextHelperService;
             _merchantContext = _paymentHttpContextHelperService.MerchantContext();
+            _payAgencyConfig = payAgencyConfig.Value;
         }
 
         public async Task<Transaction> LogPayAgencyTransactionAsync(PATransactionRequest request, PayAgencyTransactionResponse response)
@@ -46,16 +48,15 @@ namespace ElevaniPaymentGateway.Infrastructure.Implementations.Services
                 transaction.Email = request.Email;
                 transaction.PhoneNumber = request.PhoneNumber;
                 transaction.Message = response.message;
-
                 transaction.City = request.City;
                 transaction.State = request.State;
                 transaction.Zip = request.Zip;
-                transaction.IPAddress = request.IPAddress;
+                transaction.IPAddress = _payAgencyConfig.IPAddress;
                 transaction.CardNumber = $"{request.CardNumber.Substring(0, 6)}**********";
                 transaction.CardExpiryMonth = "**"; //request.CardExpiryMonth;
                 transaction.CardExpiryYear = "****"; //request.CardExpiryYear;
                 transaction.CardCVV = "***"; //request.CardCVV
-                transaction.RedirectUrl = request.RedirectUrl;
+                transaction.RedirectUrl = _payAgencyConfig.RedirectUrl;
                 transaction.WebHookUrl = "";
                 transaction.Status = StringHelpers.FormatPayAgencyStatus(response.status); 
                 transaction.PaymentGateway = PaymentGateways.PAYAGENCY;

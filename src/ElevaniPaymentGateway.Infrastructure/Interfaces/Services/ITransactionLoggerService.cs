@@ -1,5 +1,4 @@
 ﻿using ElevaniPaymentGateway.Core.Entities;
-using ElevaniPaymentGateway.Core.Enums;
 using ElevaniPaymentGateway.Core.Models.Request.TransactionService;
 using ElevaniPaymentGateway.Core.Models.Response.PayAgency;
 using ElevaniPaymentGateway.Infrastructure.Autofac;
