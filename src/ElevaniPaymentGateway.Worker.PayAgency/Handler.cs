@@ -60,8 +60,8 @@ namespace ElevaniPaymentGateway.Worker.PayAgency
                     {
                         if (transactionStatusResp.data is not null)
                         {
-                            _logger.LogInformation($"Transaction reference {payAgencyTransaction.Reference} " +
-                                $"| Pay agency reference {payAgencyTransaction.TransactionReference} | Transaction status {transactionStatusResp.status}");
+                            _logger.LogInformation($"Transaction reference >>> {payAgencyTransaction.Reference} " +
+                                $"| Pay agency reference >>> {payAgencyTransaction.TransactionReference} | Transaction status >>> {transactionStatusResp.status}");
 
                             //check transaction status
                             if (transactionStatusResp.status.ToLower().Equals("success"))
@@ -107,7 +107,7 @@ namespace ElevaniPaymentGateway.Worker.PayAgency
                             await _sqlTransactionService.CommitAndDisposeTransactionAsync(sqlTransaction);
                         }
                         else
-                            _logger.LogInformation($"Verification data => {JsonConvert.SerializeObject(transactionStatusResp.data)}");
+                            _logger.LogInformation($"Verification data >>> {JsonConvert.SerializeObject(transactionStatusResp.data)}");
                     }
                 }
             }
