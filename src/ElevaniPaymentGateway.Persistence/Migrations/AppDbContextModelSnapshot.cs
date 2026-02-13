@@ -38,7 +38,7 @@ namespace ElevaniPaymentGateway.Persistence.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
-                        .HasDefaultValue(new DateTime(2026, 1, 13, 12, 45, 28, 142, DateTimeKind.Local).AddTicks(4409));
+                        .HasDefaultValue(new DateTime(2026, 2, 12, 12, 37, 55, 907, DateTimeKind.Local).AddTicks(6558));
 
                     b.Property<string>("IPAddress")
                         .IsRequired()
@@ -354,7 +354,7 @@ namespace ElevaniPaymentGateway.Persistence.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
-                        .HasDefaultValue(new DateTime(2026, 1, 13, 12, 45, 28, 165, DateTimeKind.Local).AddTicks(4828));
+                        .HasDefaultValue(new DateTime(2026, 2, 12, 12, 37, 55, 980, DateTimeKind.Local).AddTicks(4741));
 
                     b.Property<string>("CreatedBy")
                         .HasColumnType("nvarchar(max)");
@@ -537,7 +537,7 @@ namespace ElevaniPaymentGateway.Persistence.Migrations
                     b.Property<DateTime>("DateGenerated")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
-                        .HasDefaultValue(new DateTime(2026, 1, 13, 12, 45, 28, 179, DateTimeKind.Local).AddTicks(7813));
+                        .HasDefaultValue(new DateTime(2026, 2, 12, 12, 37, 56, 26, DateTimeKind.Local).AddTicks(1424));
 
                     b.Property<DateTime?>("DateUsed")
                         .HasColumnType("datetime2");
@@ -579,6 +579,139 @@ namespace ElevaniPaymentGateway.Persistence.Migrations
                         .IsUnique();
 
                     b.ToTable("OTP");
+                });
+
+            modelBuilder.Entity("ElevaniPaymentGateway.Core.Entities.PayAgencyTransaction", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Address")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<decimal>("Amount")
+                        .ValueGeneratedOnAdd()
+                        .HasPrecision(15, 5)
+                        .HasColumnType("decimal(15,5)")
+                        .HasDefaultValue(0m);
+
+                    b.Property<string>("CardCVV")
+                        .HasMaxLength(10)
+                        .HasColumnType("nvarchar(10)");
+
+                    b.Property<string>("CardExpiryMonth")
+                        .HasMaxLength(10)
+                        .HasColumnType("nvarchar(10)");
+
+                    b.Property<string>("CardExpiryYear")
+                        .HasMaxLength(10)
+                        .HasColumnType("nvarchar(10)");
+
+                    b.Property<string>("CardNumber")
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<string>("City")
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<string>("Country")
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Currency")
+                        .HasMaxLength(10)
+                        .HasColumnType("nvarchar(10)");
+
+                    b.Property<DateTime?>("DateVerified")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<string>("Email")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<string>("FirstName")
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<string>("IPAddress")
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<bool>("IsVerified")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("LastName")
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<DateTime?>("LastRetryDateTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Message")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("OTPRedirectUrl")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PhoneNumber")
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<string>("RedirectUrl")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Reference")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<string>("State")
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("TransactionId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("TransactionReference")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("WebHookUrl")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Zip")
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("TransactionId")
+                        .IsUnique();
+
+                    b.ToTable("PayAgencyTransaction");
                 });
 
             modelBuilder.Entity("ElevaniPaymentGateway.Core.Entities.Permissions", b =>
@@ -710,9 +843,29 @@ namespace ElevaniPaymentGateway.Persistence.Migrations
                         .HasColumnType("decimal(15,5)")
                         .HasDefaultValue(0m);
 
+                    b.Property<string>("CardCVV")
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
+                    b.Property<string>("CardExpiryMonth")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<string>("CardExpiryYear")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<string>("CardNumber")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("City")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
                     b.Property<string>("CountryCode")
-                        .HasMaxLength(5)
-                        .HasColumnType("nvarchar(5)");
+                        .HasMaxLength(10)
+                        .HasColumnType("nvarchar(10)");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
@@ -725,38 +878,52 @@ namespace ElevaniPaymentGateway.Persistence.Migrations
                         .HasMaxLength(10)
                         .HasColumnType("nvarchar(10)");
 
-                    b.Property<string>("CustomerEmail")
+                    b.Property<string>("Email")
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<string>("FirstName")
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<string>("IPAddress")
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
-                    b.Property<string>("CustomerFirstName")
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<string>("CustomerLastName")
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<string>("CustomerPhoneNumber")
-                        .HasMaxLength(15)
-                        .HasColumnType("nvarchar(15)");
+                    b.Property<string>("LastName")
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
 
                     b.Property<string>("MerchantId")
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
+                    b.Property<string>("Message")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("Narration")
-                        .HasMaxLength(200)
-                        .HasColumnType("nvarchar(200)");
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
 
                     b.Property<string>("PaymentGateway")
                         .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PhoneNumber")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<string>("RedirectUrl")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Reference")
                         .IsRequired()
                         .HasMaxLength(200)
                         .HasColumnType("nvarchar(200)");
+
+                    b.Property<string>("State")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<string>("Status")
                         .IsRequired()
@@ -767,6 +934,13 @@ namespace ElevaniPaymentGateway.Persistence.Migrations
 
                     b.Property<string>("UpdatedBy")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("WebHookUrl")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Zip")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.HasKey("Id");
 
@@ -798,7 +972,7 @@ namespace ElevaniPaymentGateway.Persistence.Migrations
                     b.Property<DateTime>("DateOfBirth")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
-                        .HasDefaultValue(new DateTime(2026, 1, 13, 12, 45, 28, 182, DateTimeKind.Local).AddTicks(5509));
+                        .HasDefaultValue(new DateTime(2026, 2, 12, 12, 37, 56, 36, DateTimeKind.Local).AddTicks(9668));
 
                     b.Property<string>("Email")
                         .IsRequired()
@@ -1100,6 +1274,17 @@ namespace ElevaniPaymentGateway.Persistence.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("ElevaniPaymentGateway.Core.Entities.PayAgencyTransaction", b =>
+                {
+                    b.HasOne("ElevaniPaymentGateway.Core.Entities.Transaction", "Transaction")
+                        .WithOne("PayAgencyTransaction")
+                        .HasForeignKey("ElevaniPaymentGateway.Core.Entities.PayAgencyTransaction", "TransactionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Transaction");
+                });
+
             modelBuilder.Entity("ElevaniPaymentGateway.Core.Entities.RolePermissions", b =>
                 {
                     b.HasOne("ElevaniPaymentGateway.Core.Entities.Permissions", "Permissions")
@@ -1208,6 +1393,9 @@ namespace ElevaniPaymentGateway.Persistence.Migrations
             modelBuilder.Entity("ElevaniPaymentGateway.Core.Entities.Transaction", b =>
                 {
                     b.Navigation("GratipTransaction")
+                        .IsRequired();
+
+                    b.Navigation("PayAgencyTransaction")
                         .IsRequired();
                 });
 

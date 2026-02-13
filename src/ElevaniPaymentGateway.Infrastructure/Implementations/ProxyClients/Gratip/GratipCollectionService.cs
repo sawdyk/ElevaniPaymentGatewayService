@@ -18,8 +18,8 @@ namespace ElevaniPaymentGateway.Infrastructure.Implementations.ProxyClients.Grat
         private readonly ILogger<GratipCollectionService> _logger;
         private readonly IGratipServiceProxyClient _gratipServiceProxyClient;
         private readonly GratipConfig _gratipConfig;
-        public GratipCollectionService(IGratipServiceProxyClient gratipServiceProxyClient, ILogger<GratipCollectionService> logger,
-            IOptions<GratipConfig> gratipConfig)
+        public GratipCollectionService(IGratipServiceProxyClient gratipServiceProxyClient, 
+            ILogger<GratipCollectionService> logger, IOptions<GratipConfig> gratipConfig)
         {
             _gratipServiceProxyClient = gratipServiceProxyClient;
             _logger = logger;
