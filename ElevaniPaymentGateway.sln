@@ -13,13 +13,9 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ElevaniPaymentGateway.API.A
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ElevaniPaymentGateway.API.Transaction", "src\ElevaniPaymentGateway.API.Transaction\ElevaniPaymentGateway.API.Transaction.csproj", "{DF89B531-5107-419F-8CCE-625267C38165}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ElevaniPaymentGateway.Worker.PayAgency", "src\ElevaniPaymentGateway.Worker.PayAgency\ElevaniPaymentGateway.Worker.PayAgency.csproj", "{319F6D19-DDDE-447A-B3E0-A8A324606CB6}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ElevaniPaymentGateway.Worker.Gratip", "src\ElevaniPaymentGateway.Worker.Gratip\ElevaniPaymentGateway.Worker.Gratip.csproj", "{AE50CA0E-BD22-4DEB-AE78-E8982ABC288B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ElevaniPaymentGateway.Worker.Gratip", "ElevaniPaymentGateway.Worker.Gratip\ElevaniPaymentGateway.Worker.Gratip.csproj", "{0C22DB7C-20D6-42E1-991B-1545606E94C9}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ElevaniPaymentGateway.Worker.PayAgency", "src\ElevaniPaymentGateway.Worker.PayAgency\ElevaniPaymentGateway.Worker.PayAgency.csproj", "{319F6D19-DDDE-447A-B3E0-A8A324606CB6}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ElevaniPaymentGateway.Worker.Gratip", "src\ElevaniPaymentGateway.Worker.Gratip\ElevaniPaymentGateway.Worker.Gratip.csproj", "{3390F206-0952-4638-8BA3-DD2E507D7817}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ElevaniPaymentGateway.Worker.PayAgency", "src\ElevaniPaymentGateway.Worker.PayAgency\ElevaniPaymentGateway.Worker.PayAgency.csproj", "{F78AB804-5C4D-46FF-AADE-CAB22AF09363}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -47,22 +43,14 @@ Global
 		{DF89B531-5107-419F-8CCE-625267C38165}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DF89B531-5107-419F-8CCE-625267C38165}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DF89B531-5107-419F-8CCE-625267C38165}.Release|Any CPU.Build.0 = Release|Any CPU
-		{7EE486F6-FB2C-473D-9AE3-79DCA44F0170}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{7EE486F6-FB2C-473D-9AE3-79DCA44F0170}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{7EE486F6-FB2C-473D-9AE3-79DCA44F0170}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{7EE486F6-FB2C-473D-9AE3-79DCA44F0170}.Release|Any CPU.Build.0 = Release|Any CPU
-		{319F6D19-DDDE-447A-B3E0-A8A324606CB6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{319F6D19-DDDE-447A-B3E0-A8A324606CB6}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{319F6D19-DDDE-447A-B3E0-A8A324606CB6}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{319F6D19-DDDE-447A-B3E0-A8A324606CB6}.Release|Any CPU.Build.0 = Release|Any CPU
-		{0C22DB7C-20D6-42E1-991B-1545606E94C9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{0C22DB7C-20D6-42E1-991B-1545606E94C9}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{0C22DB7C-20D6-42E1-991B-1545606E94C9}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{0C22DB7C-20D6-42E1-991B-1545606E94C9}.Release|Any CPU.Build.0 = Release|Any CPU
-		{3390F206-0952-4638-8BA3-DD2E507D7817}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{3390F206-0952-4638-8BA3-DD2E507D7817}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{3390F206-0952-4638-8BA3-DD2E507D7817}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{3390F206-0952-4638-8BA3-DD2E507D7817}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AE50CA0E-BD22-4DEB-AE78-E8982ABC288B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AE50CA0E-BD22-4DEB-AE78-E8982ABC288B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AE50CA0E-BD22-4DEB-AE78-E8982ABC288B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AE50CA0E-BD22-4DEB-AE78-E8982ABC288B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F78AB804-5C4D-46FF-AADE-CAB22AF09363}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F78AB804-5C4D-46FF-AADE-CAB22AF09363}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F78AB804-5C4D-46FF-AADE-CAB22AF09363}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F78AB804-5C4D-46FF-AADE-CAB22AF09363}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

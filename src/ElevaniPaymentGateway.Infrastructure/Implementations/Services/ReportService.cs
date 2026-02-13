@@ -1,5 +1,6 @@
 ﻿using ElevaniPaymentGateway.Core.Constants;
 using ElevaniPaymentGateway.Core.Entities;
+using ElevaniPaymentGateway.Core.Enums;
 using ElevaniPaymentGateway.Core.Exceptions;
 using ElevaniPaymentGateway.Core.Helpers.Pagination;
 using ElevaniPaymentGateway.Core.Models.Request;
@@ -81,7 +82,10 @@ namespace ElevaniPaymentGateway.Infrastructure.Implementations.Services
                             workSheet.Cells[recordIndex, 1].Value = (recordIndex - 1).ToString();
                             workSheet.Cells[recordIndex, 2].Value = $"{trans.MerchantId}";
                             workSheet.Cells[recordIndex, 3].Value = trans.Reference;
-                            workSheet.Cells[recordIndex, 4].Value = trans.GratipTransaction.TransactionReference;
+                            if (trans.PaymentGateway == PaymentGateways.GRATIP)
+                                workSheet.Cells[recordIndex, 4].Value = trans.GratipTransaction.TransactionReference;
+                            else
+                                workSheet.Cells[recordIndex, 4].Value = trans.PayAgencyTransaction.TransactionReference;
                             workSheet.Cells[recordIndex, 5].Value = trans.Currency;
                             workSheet.Cells[recordIndex, 6].Value = trans.Amount;
                             workSheet.Cells[recordIndex, 7].Value = trans.Narration;
