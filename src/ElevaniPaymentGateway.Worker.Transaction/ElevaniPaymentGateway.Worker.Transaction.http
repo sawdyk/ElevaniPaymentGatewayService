@@ -1,6 +1,0 @@
-@ElevaniPaymentGateway.WorkerService_HostAddress = http://localhost:5258
-
-GET {{ElevaniPaymentGateway.WorkerService_HostAddress}}/weatherforecast/
-Accept: application/json
-
-###
