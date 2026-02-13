@@ -32,7 +32,6 @@ namespace ElevaniPaymentGateway.Worker.PayAgency
                 }
 
                 await Task.Delay(TimeSpan.FromSeconds(_backgroundJobConfig.PayAgencyTransactionVerificationTaskDelay), stoppingToken);
-                _logger.LogInformation($"{Environment.NewLine}");
             }
         }
     }

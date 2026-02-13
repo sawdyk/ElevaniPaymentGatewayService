@@ -32,7 +32,6 @@ namespace ElevaniPaymentGateway.Worker.Gratip
                 }
 
                 await Task.Delay(TimeSpan.FromSeconds(_backgroundJobConfig.GratipTransactionVerificationTaskDelay), stoppingToken);
-                _logger.LogInformation($"{Environment.NewLine}");
             }
         }
     }
