@@ -61,7 +61,7 @@ namespace ElevaniPaymentGateway.Infrastructure.Implementations.Services.PaymentG
 
                 _logger.LogInformation($"merchant encrypted transaction request >>> {JsonConvert.SerializeObject(encryptedRequest)}");
                 string merchantDecryptedRequest = PayAgencyEncryptionService.DecryptData(encryptedRequest.Payload, _payAgencyConfig.MerchantEncryptionKey);
-                _logger.LogInformation($"merchant decrypted transaction request >>> {merchantDecryptedRequest}"); //remove this later
+                //_logger.LogInformation($"merchant decrypted transaction request >>> {merchantDecryptedRequest}"); //remove this later
 
                 var merchantRequest = JsonConvert.DeserializeObject<PATransactionRequest>(merchantDecryptedRequest);
 
