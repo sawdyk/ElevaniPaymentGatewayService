@@ -55,6 +55,7 @@ namespace ElevaniPaymentGateway.Core.Models.Dto
         public string? CardExpiryMonth { get; set; }
         public string? CardExpiryYear { get; set; }
         public string? CardCVV { get; set; }
+        public string? RedirectUrl { get; set; }
         public string? Message { get; set; }
         public TransactionStatus Status { get; set; }
         public DateTime CreatedAt { get; set; }
