@@ -56,7 +56,7 @@ namespace ElevaniPaymentGateway.Infrastructure.Implementations.Services
                 transaction.CardExpiryMonth = "**"; //request.CardExpiryMonth;
                 transaction.CardExpiryYear = "****"; //request.CardExpiryYear;
                 transaction.CardCVV = "***"; //request.CardCVV
-                transaction.RedirectUrl = _payAgencyConfig.RedirectUrl;
+                transaction.RedirectUrl = request.RedirectUrl; //_payAgencyConfig.RedirectUrl;
                 transaction.WebHookUrl = "";
                 transaction.Status = StringHelpers.FormatPayAgencyStatus(response.status); 
                 transaction.PaymentGateway = PaymentGateways.PAYAGENCY;

@@ -42,7 +42,7 @@ namespace ElevaniPaymentGateway.Core.Helpers.AutoMapper
                 .ForMember(dest => dest.card_expiry_month, opt => opt.MapFrom(src => src.CardExpiryMonth))
                 .ForMember(dest => dest.card_expiry_year, opt => opt.MapFrom(src => src.CardExpiryYear))
                 .ForMember(dest => dest.card_cvv, opt => opt.MapFrom(src => src.CardCVV))
-                //.ForMember(dest => dest.redirect_url, opt => opt.MapFrom(src => src.RedirectUrl))
+                .ForMember(dest => dest.redirect_url, opt => opt.MapFrom(src => src.RedirectUrl))
                 .ForMember(dest => dest.order_id, opt => opt.MapFrom(src => src.Reference));
         }
     }

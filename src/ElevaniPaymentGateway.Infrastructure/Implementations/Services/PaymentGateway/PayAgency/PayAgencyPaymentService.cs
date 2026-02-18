@@ -76,7 +76,7 @@ namespace ElevaniPaymentGateway.Infrastructure.Implementations.Services.PaymentG
 
                 var payAgencytTransRequest = _mapper.Map<PayAgencyTransactionRequest>(merchantRequest);
                 payAgencytTransRequest.ip_address = _payAgencyConfig.IPAddress;
-                payAgencytTransRequest.redirect_url = _payAgencyConfig.RedirectUrl;
+                //payAgencytTransRequest.redirect_url = _payAgencyConfig.RedirectUrl;
 
                 var payAgencyRequest = JsonConvert.SerializeObject(payAgencytTransRequest);
                 string payAgencyEncryptedRequest = PayAgencyEncryptionService.EncryptData(payAgencyRequest, _payAgencyConfig.EncryptionKey);

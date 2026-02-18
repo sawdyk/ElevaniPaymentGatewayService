@@ -56,7 +56,7 @@ namespace ElevaniPaymentGateway.Infrastructure.Helpers
                 || string.IsNullOrEmpty(request.Address) || string.IsNullOrEmpty(request.Country) || string.IsNullOrEmpty(request.City)
                 || string.IsNullOrEmpty(request.State) || string.IsNullOrEmpty(request.Zip) || string.IsNullOrEmpty(request.PhoneNumber) 
                 || string.IsNullOrEmpty(request.Currency) || string.IsNullOrEmpty(request.CardNumber) || string.IsNullOrEmpty(request.CardExpiryYear) 
-                || string.IsNullOrEmpty(request.CardExpiryMonth) || string.IsNullOrEmpty(request.CardCVV)
+                || string.IsNullOrEmpty(request.CardExpiryMonth) || string.IsNullOrEmpty(request.CardCVV) || string.IsNullOrEmpty(request.RedirectUrl)
                 || string.IsNullOrEmpty(request.Reference) || string.IsNullOrEmpty(request.Description))
                 throw new DataValidationException($"Contains one or more null or empty values");
           
