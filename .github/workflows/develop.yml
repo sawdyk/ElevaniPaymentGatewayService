@@ -111,7 +111,7 @@ jobs:
         - uses: actions/checkout@v3      
         - name: Build the Docker image
           #working-directory: src/PrimeElectronics.API
-          run: docker build . -t sawdykdocker/elevani_payagency_job:latest -f docker/payagency-job/Dockerfile
+          run: docker build . -t sawdykdocker/elevani_payagency_dev_job:latest -f docker/payagency-job/Dockerfile
 
         - name: Log into Docker Hub
           uses: docker/login-action@v2
@@ -120,7 +120,7 @@ jobs:
             password: ${{ secrets.DOCKERHUB_TOKEN }}
 
         - name: Push the image to Docker Hub
-          run: docker push sawdykdocker/elevani_payagency_job:latest
+          run: docker push sawdykdocker/elevani_payagency_dev_job:latest
 
         - name: Pull the image to VM
           uses: appleboy/ssh-action@v1.0.0
@@ -130,10 +130,10 @@ jobs:
             password: ${{ secrets.DEV_VPS_PASSWORD }}
             script: |
               docker image prune --all
-              docker stop elevani_payagency_job || true
-              docker rm elevani_payagency_job -f || true
-              docker rmi sawdykdocker/elevani_payagency_job -f || true
-              docker image pull sawdykdocker/elevani_payagency_job:latest
+              docker stop elevani_payagency_dev_job || true
+              docker rm elevani_payagency_dev_job -f || true
+              docker rmi sawdykdocker/elevani_payagency_dev_job -f || true
+              docker image pull sawdykdocker/elevani_payagency_dev_job:latest
               cd /root/ElevaniApp/Backend/PayAgencyJob
               docker compose up -d #run in detach mode
     
