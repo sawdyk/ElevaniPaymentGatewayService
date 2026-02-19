@@ -1,12 +1,13 @@
 ﻿using ElevaniPaymentGateway.Core.Entities;
-using ElevaniPaymentGateway.Core.Enums;
 using ElevaniPaymentGateway.Core.Models.Request.TransactionService;
+using ElevaniPaymentGateway.Core.Models.Response.PayAgency;
 using ElevaniPaymentGateway.Infrastructure.Autofac;
 
 namespace ElevaniPaymentGateway.Infrastructure.Interfaces.Services
 {
     public interface ITransactionLoggerService : IAutoDependencyServices
     {
-        Task<Transaction> LogTransactionAsync(string merchantId, PaymentGateways paymentGateway, TransactionRequest request);
+        Task<Transaction> LogGratipTransactionAsync(TransactionRequest request);
+        Task<Transaction> LogPayAgencyTransactionAsync(PATransactionRequest request, PayAgencyTransactionResponse response);
     }
 }

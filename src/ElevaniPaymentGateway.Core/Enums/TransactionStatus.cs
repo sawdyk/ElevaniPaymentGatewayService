@@ -17,5 +17,13 @@ namespace ElevaniPaymentGateway.Core.Enums
         Declined,
         [Display(Description = "Cancelled")]
         Cancelled,
+        [Display(Description = "Init")]
+        Init,
+        [Display(Description = "Redirect")]
+        Redirect,
+        [Display(Description = "Blocked")]
+        Blocked,
+        [Display(Description = "Abandoned")]
+        Abandoned,
     }
 }

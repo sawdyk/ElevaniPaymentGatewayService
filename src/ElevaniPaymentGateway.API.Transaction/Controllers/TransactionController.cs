@@ -28,20 +28,36 @@ namespace ElevaniPaymentGateway.PaymentAPI.Controllers
         [SwaggerResponse(StatusCodes.Status200OK, "Success", typeof(GenericResponse<TransactionResponse>))]
         [SwaggerResponse(StatusCodes.Status400BadRequest, "Failed", typeof(ProblemDetails))]
         [SwaggerResponse(StatusCodes.Status500InternalServerError, "Internal server error", typeof(ProblemDetails))]
-        public async Task<IActionResult> InitiateTransactionViaPaymentGatewayAsync(TransactionRequest request)
+        public async Task<IActionResult> InitiateGratipPaymentCollectionAsync(TransactionRequest request)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest();
             }
 
-            var response = await _transactionService.InitiateTransactionViaPaymentGatewayAsync(request);
+            var response = await _transactionService.InitiateGratipPaymentCollectionAsync(request);
+            return Ok(response);
+        }
+
+        [HttpPost("initiate-pa-server")] //pay agency server to server
+        [SwaggerOperation("Initiate card transaction")]
+        [SwaggerResponse(StatusCodes.Status200OK, "Success", typeof(GenericResponse<PATransactionResponse>))]
+        [SwaggerResponse(StatusCodes.Status400BadRequest, "Failed", typeof(ProblemDetails))]
+        [SwaggerResponse(StatusCodes.Status500InternalServerError, "Internal server error", typeof(ProblemDetails))]
+        public async Task<IActionResult> InitiatePayAgencyServerToServerAsync(PAEncryptedTransactionRequest request)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest();
+            }
+
+            var response = await _transactionService.InitiatePayAgencyServerToServerAsync(request);
             return Ok(response);
         }
 
         [HttpGet("status/{reference}")]
         [SwaggerOperation("Get transaction status by reference")]
-        [SwaggerResponse(StatusCodes.Status200OK, "Success", typeof(GenericResponse<TransactionDto>))]
+        [SwaggerResponse(StatusCodes.Status200OK, "Success", typeof(GenericResponse<MerchantTransactionDto>))]
         [SwaggerResponse(StatusCodes.Status400BadRequest, "Failed", typeof(ProblemDetails))]
         [SwaggerResponse(StatusCodes.Status500InternalServerError, "Internal server error", typeof(ProblemDetails))]
         public async Task<IActionResult> StatusAsync(string reference)
@@ -57,7 +73,7 @@ namespace ElevaniPaymentGateway.PaymentAPI.Controllers
 
         [HttpGet("transactions")]
         [SwaggerOperation("Get all merchant transactions")]
-        [SwaggerResponse(StatusCodes.Status200OK, "Success", typeof(GenericResponse<TransactionDto>))]
+        [SwaggerResponse(StatusCodes.Status200OK, "Success", typeof(GenericResponse<MerchantTransactionDto>))]
         [SwaggerResponse(StatusCodes.Status400BadRequest, "Failed", typeof(ProblemDetails))]
         [SwaggerResponse(StatusCodes.Status500InternalServerError, "Internal server error", typeof(ProblemDetails))]
         public async Task<IActionResult> MerchantIdAsync([FromQuery] PaginationParams paginationParams)

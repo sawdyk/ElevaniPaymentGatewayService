@@ -74,7 +74,7 @@ namespace ElevaniPaymentGateway.Infrastructure.Implementations.Services
                 merchantCredential.MerchantId = merchant.Id;
                 merchantCredential.APIKey = $"{Guid.NewGuid().ToString().Replace("-", "").ToLower()}";
                 merchantCredential.APISecret = Guid.NewGuid().ToString().ToLower();
-                merchantCredential.ExpiryDate = DateTime.Now.AddDays(_appSettingsConfig.MerchantCredentialExpiration);
+                merchantCredential.ExpiryDate = DateTime.Now.AddYears(_appSettingsConfig.MerchantCredentialExpiration);
                 merchantCredential.CreatedBy = _userContext.UserId.ToString();
 
                 _merchantCredentialRepository.Add(merchantCredential);

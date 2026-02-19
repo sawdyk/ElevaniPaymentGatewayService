@@ -147,4 +147,52 @@ jobs:
               cd /root/ElevaniApp/Backend/GratipJob
               docker compose up -d #run in detach mode
     
+
+    payagency-job:
+        name: deploy-payagency-job
+        runs-on: ubuntu-latest
+        steps:
+        - uses: actions/checkout@v3     
+  
+        - name: App Settings Variable Substitution
+          uses: microsoft/variable-substitution@v1
+          with:
+            files: 'src/ElevaniPaymentGateway.Worker.PayAgency/appsettings.json'
+          env:
+              ConnectionStrings.PGDatabaseCon: ${{ secrets.PROD_DB_CONNECTION }} # uses the production database
+              PayAgencyConfig.BaseUrl: ${{ secrets.PROD_PAYAGENCY_BASEURL }} # uses the production PAYAGENCY base url
+              PayAgencyConfig.EncryptionKey: ${{ secrets.PROD_PAYAGENCY_ENCRYPTION_KEY }} # uses the production PAYAGENCY encryption key
+              PayAgencyConfig.SecretKey: ${{ secrets.PROD_PAYAGENCY_SECRET_KEY }} # uses the production PAYAGENCY secret key
+              PayAgencyConfig.Initiate: v1/live/card # uses the production PAYAGENCY initiate endpoint
+              PayAgencyConfig.Status: live/status/{id} # uses the production PAYAGENCY status endpoint
+              PayAgencyConfig.MerchantEncryptionKey: ${{ secrets.PROD_PAYAGENCY_MERCHANT_ENCRYPTION_KEY }} # uses the production merchant encryption key
+              PayAgencyConfig.IPAddress: 207.180.196.233 # uses the production IP Address
+
+        - name: Build the Docker image
+          #working-directory: src/PrimeElectronics.API
+          run: docker build . -t sawdykdocker/elevani_payagency_prod_job:latest -f docker/payagency-job/Dockerfile
+
+        - name: Log into Docker Hub
+          uses: docker/login-action@v2
+          with:
+            username: ${{ secrets.DOCKERHUB_USERNAME }}
+            password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+        - name: Push the image to Docker Hub
+          run: docker push sawdykdocker/elevani_payagency_prod_job:latest
+
+        - name: Pull the image to VM
+          uses: appleboy/ssh-action@v1.0.0
+          with:
+            host: ${{ secrets.PROD_VPS_IP }}
+            username: ${{ secrets.PROD_VPS_USER }}
+            password: ${{ secrets.PROD_VPS_PASSWORD }}
+            script: |
+              docker image prune --all
+              docker stop elevani_payagency_prod_job || true
+              docker rm elevani_payagency_prod_job -f || true
+              docker rmi sawdykdocker/elevani_payagency_prod_job -f || true
+              docker image pull sawdykdocker/elevani_payagency_prod_job:latest
+              cd /root/ElevaniApp/Backend/PayAgencyJob
+              docker compose up -d #run in detach mode
     

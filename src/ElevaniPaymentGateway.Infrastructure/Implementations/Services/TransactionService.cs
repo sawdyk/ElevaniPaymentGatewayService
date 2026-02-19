@@ -8,11 +8,11 @@ using ElevaniPaymentGateway.Core.Models.Dto;
 using ElevaniPaymentGateway.Core.Models.Request.TransactionService;
 using ElevaniPaymentGateway.Core.Models.Response;
 using ElevaniPaymentGateway.Core.Models.Response.TransactionService;
-using ElevaniPaymentGateway.Infrastructure.Helpers;
 using ElevaniPaymentGateway.Infrastructure.Interfaces.Queries;
 using ElevaniPaymentGateway.Infrastructure.Interfaces.Services;
 using ElevaniPaymentGateway.Infrastructure.Interfaces.Services.Helpers;
 using ElevaniPaymentGateway.Infrastructure.Interfaces.Services.PaymentGateway.Gratip;
+using ElevaniPaymentGateway.Infrastructure.Interfaces.Services.PaymentGateway.PayAgency;
 using Microsoft.Extensions.Logging;
 using static ElevaniPaymentGateway.Core.Helpers.Pagination.QueryableExtensions;
 
@@ -26,9 +26,10 @@ namespace ElevaniPaymentGateway.Infrastructure.Implementations.Services
         private readonly IGratipPaymentService _gratipPaymentService;
         private MerchantContextDto _merchantContext;
         private readonly IPaymentHttpContextHelperService _paymentHttpContextHelperService;
-        private readonly ValidationHelper _validationHelper;
+        private readonly IPayAgencyPaymentService _payAgencyPaymentService;
         public TransactionService(ILogger<TransactionService> logger, ITransactionQuery transactionQuery, IMapper mapper, 
-            IGratipPaymentService gratipPaymentService, IPaymentHttpContextHelperService paymentHttpContextHelperService, ValidationHelper validationHelper)
+            IGratipPaymentService gratipPaymentService, IPaymentHttpContextHelperService paymentHttpContextHelperService, 
+            IPayAgencyPaymentService payAgencyPaymentService)
         {
             _logger = logger;
             _transactionQuery = transactionQuery;
@@ -36,29 +37,18 @@ namespace ElevaniPaymentGateway.Infrastructure.Implementations.Services
             _gratipPaymentService = gratipPaymentService;
             _paymentHttpContextHelperService = paymentHttpContextHelperService;
             _merchantContext = _paymentHttpContextHelperService.MerchantContext();
-            _validationHelper = validationHelper;
+            _payAgencyPaymentService = payAgencyPaymentService;
         }
 
-        public async Task<GenericResponse<TransactionResponse>> InitiateTransactionViaPaymentGatewayAsync(TransactionRequest request)
+        public async Task<GenericResponse<TransactionResponse>> InitiateGratipPaymentCollectionAsync(TransactionRequest request)
         {
             try
             {
-                _validationHelper.ValidateRequest(request);
                 TransactionResponse initiatePaymentResponse = new TransactionResponse();
-
-                var merhantSlug = request.Reference.Substring(0, 3);
-                if(!_merchantContext.Slug.Equals(merhantSlug))
-                    throw new GenericException("Invalid reference format");
-
-                var existingReference = await _transactionQuery.GetByAsync(x => x.Reference == request.Reference);
-                if (existingReference is not null)
-                    throw new GenericException("Duplicate reference");
-                //string reference = RandomGeneratorHelper.GenerateTransactionReference(_merchantContext.Slug, request.Currency, request.Amount.ToString());
-
                 switch (_merchantContext.PaymentGateway)
                 {
                     case nameof(PaymentGateways.GRATIP):
-                        initiatePaymentResponse = await _gratipPaymentService.InitiateTransactionAsync(_merchantContext.MerchantId, request);
+                        initiatePaymentResponse = await _gratipPaymentService.InitiateTransactionAsync(request);
                         break;
 
                     default:
@@ -81,15 +71,47 @@ namespace ElevaniPaymentGateway.Infrastructure.Implementations.Services
             }
         }
 
-        public async Task<GenericResponse<TransactionDto>> StatusAsync(string reference)
+        public async Task<GenericResponse<PATransactionResponse>> InitiatePayAgencyServerToServerAsync(PAEncryptedTransactionRequest encryptedRequest)
+        {
+            try
+            {
+                PATransactionResponse initiatePaymentResponse = new PATransactionResponse();
+                switch (_merchantContext.PaymentGateway)
+                {
+                    case nameof(PaymentGateways.PAYAGENCY):
+                        initiatePaymentResponse = await _payAgencyPaymentService.ServerToServerAsync(encryptedRequest);
+                        break;
+
+                    default:
+                        break;
+                }
+
+                return GenericResponse<PATransactionResponse>.Success(initiatePaymentResponse);
+            }
+            catch (Exception ex)
+            when (ex is NotFoundException || ex is GenericException
+            || ex is DataValidationException || ex is ArgumentException)
+            {
+                throw;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"An error occured while trying to initiate payment via server to server >> " +
+                    $"{ex.Message} | stack trace >> {ex.StackTrace} | inner exception >> {ex.InnerException} | source >> {ex.Source}");
+                throw new UnhandledException(RespMsgConstants.UnhandledException);
+            }
+        }
+
+        public async Task<GenericResponse<MerchantTransactionDto>> StatusAsync(string reference)
         {
             try
             {
                 var transaction = await _transactionQuery.GetByAsync(x => x.Reference == reference && x.MerchantId == _merchantContext.MerchantId);
-                if (transaction is null) throw new NotFoundException("Transaction does not exist");
+                if (transaction is null)
+                    throw new NotFoundException("Transaction does not exist");
 
-                var transactionDto = _mapper.Map<TransactionDto>(transaction);
-                return GenericResponse<TransactionDto>.Success(transactionDto);
+                var transactionDto = _mapper.Map<MerchantTransactionDto>(transaction);
+                return GenericResponse<MerchantTransactionDto>.Success(transactionDto);
             }
             catch (Exception ex)
             when (ex is NotFoundException)
@@ -98,7 +120,7 @@ namespace ElevaniPaymentGateway.Infrastructure.Implementations.Services
             }
             catch (Exception ex)
             {
-                _logger.LogError($"Error encountered while trying to get transaction by reference - {ex.Message}" +
+                _logger.LogError($"An error occurred while trying to get transaction by reference - {ex.Message}" +
                     $"| stack trace >> {ex.StackTrace} | inner exception >> {ex.InnerException} | source >> {ex.Source}");
                 throw new UnhandledException(RespMsgConstants.UnhandledException);
             }
@@ -120,6 +142,7 @@ namespace ElevaniPaymentGateway.Infrastructure.Implementations.Services
                             new(){ PropertyExpression = x => x.Currency, SearchType = SearchType.Contains },
                             new(){ PropertyExpression = x => x.Amount, SearchType = SearchType.Contains },
                             new(){ PropertyExpression = x => x.GratipTransaction.TransactionReference, SearchType = SearchType.Contains },
+                            new(){ PropertyExpression = x => x.PayAgencyTransaction.TransactionReference, SearchType = SearchType.Contains },
                         }
                     };
 
@@ -133,13 +156,13 @@ namespace ElevaniPaymentGateway.Infrastructure.Implementations.Services
             }
             catch (Exception ex)
             {
-                _logger.LogError($"Error encountered while trying to fecth all merchant transactions - {ex.Message}" +
+                _logger.LogError($"An error occurred while trying to fecth all merchant transactions - {ex.Message}" +
                     $"| stack trace >> {ex.StackTrace} | inner exception >> {ex.InnerException} | source >> {ex.Source}");
                 throw new UnhandledException(RespMsgConstants.UnhandledException);
             }
         }
 
-        public async Task<GenericPagedResponse<TransactionDto>> MerchantAsync(PaginationParams paginationParams)
+        public async Task<GenericPagedResponse<MerchantTransactionDto>> MerchantAsync(PaginationParams paginationParams)
         {
             try
             {
@@ -161,13 +184,13 @@ namespace ElevaniPaymentGateway.Infrastructure.Implementations.Services
                 }
 
                 var result = await transactionsQuery.ToPagedResultAsync(paginationParams);
-                var transactionsDto = _mapper.Map<PagedResult<TransactionDto>>(result);
+                var transactionsDto = _mapper.Map<PagedResult<MerchantTransactionDto>>(result);
 
-                return GenericPagedResponse<TransactionDto>.Success(transactionsDto);
+                return GenericPagedResponse<MerchantTransactionDto>.Success(transactionsDto);
             }
             catch (Exception ex)
             {
-                _logger.LogError($"Error encountered while trying to fecth all merchant transactions - {ex.Message}" +
+                _logger.LogError($"An error occurred while trying to fecth all merchant transactions - {ex.Message}" +
                     $"| stack trace >> {ex.StackTrace} | inner exception >> {ex.InnerException} | source >> {ex.Source}");
                 throw new UnhandledException(RespMsgConstants.UnhandledException);
             }

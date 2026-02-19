@@ -17,6 +17,7 @@ namespace ElevaniPaymentGateway.Infrastructure.Extensions
             services.Configure<JobIDConfig>(configuration.GetSection("JobIDConfig"));
             services.Configure<EncryptorConfig>(configuration.GetSection("EncryptorConfig"));
             services.Configure<BackgroundJobConfig>(configuration.GetSection("BackgroundJobConfig"));
+            services.Configure<PayAgencyConfig>(configuration.GetSection("PayAgencyConfig"));
 
             services.AddApiVersioning(options =>
             {
