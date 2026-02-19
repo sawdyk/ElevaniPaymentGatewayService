@@ -25,6 +25,13 @@ jobs:
               EncryptorConfig.IV: ${{ secrets.PROD_ENCRYPTION_IV }} # uses the production encryption IV
               EncryptorConfig.Key: ${{ secrets.PROD_ENCRYPTION_KEY }} # uses the production encryption KEY
               AppSettingsConfig.EnableAPIEncryption: false # uses the production encryption KEY
+              PayAgencyConfig.BaseUrl: https://backend.pay.agency/api/ # uses the production PAYAGENCY base url
+              PayAgencyConfig.EncryptionKey: 74e369bef4900fda92d7479ed223e480 # uses the production PAYAGENCY encryption key
+              PayAgencyConfig.SecretKey: ${{ secrets.PROD_PAYAGENCY_SECRET_KEY }} # uses the production PAYAGENCY secret key
+              PayAgencyConfig.Initiate: v1/live/card # uses the production PAYAGENCY initiate endpoint
+              PayAgencyConfig.Status: live/status/{id} # uses the production PAYAGENCY status endpoint
+              PayAgencyConfig.MerchantEncryptionKey: 2542b322a40ada01489c5491fe379512 # uses the production merchant encryption key
+              PayAgencyConfig.IPAddress: 207.180.196.233 # uses the production IP Address
     
         - name: Build the Docker image
           #working-directory: src/PrimeElectronics.API
@@ -74,6 +81,13 @@ jobs:
               EncryptorConfig.IV: ${{ secrets.PROD_ENCRYPTION_IV }} # uses the production encryption IV
               EncryptorConfig.Key: ${{ secrets.PROD_ENCRYPTION_KEY }} # uses the production encryption KEY
               AppSettingsConfig.EnableAPIEncryption: false # uses the production encryption KEY
+              PayAgencyConfig.BaseUrl: https://backend.pay.agency/api/ # uses the production PAYAGENCY base url
+              PayAgencyConfig.EncryptionKey: 74e369bef4900fda92d7479ed223e480 # uses the production PAYAGENCY encryption key
+              PayAgencyConfig.SecretKey: ${{ secrets.PROD_PAYAGENCY_SECRET_KEY }} # uses the production PAYAGENCY secret key
+              PayAgencyConfig.Initiate: v1/live/card # uses the production PAYAGENCY initiate endpoint
+              PayAgencyConfig.Status: live/status/{id} # uses the production PAYAGENCY status endpoint
+              PayAgencyConfig.MerchantEncryptionKey: 2542b322a40ada01489c5491fe379512 # uses the production merchant encryption key
+              PayAgencyConfig.IPAddress: 207.180.196.233 # uses the production IP Address
     
         - name: Build the Docker image
           #working-directory: src/PrimeElectronics.API
@@ -160,12 +174,12 @@ jobs:
             files: 'src/ElevaniPaymentGateway.Worker.PayAgency/appsettings.json'
           env:
               ConnectionStrings.PGDatabaseCon: ${{ secrets.PROD_DB_CONNECTION }} # uses the production database
-              PayAgencyConfig.BaseUrl: ${{ secrets.PROD_PAYAGENCY_BASEURL }} # uses the production PAYAGENCY base url
-              PayAgencyConfig.EncryptionKey: ${{ secrets.PROD_PAYAGENCY_ENCRYPTION_KEY }} # uses the production PAYAGENCY encryption key
+              PayAgencyConfig.BaseUrl: https://backend.pay.agency/api/ # uses the production PAYAGENCY base url
+              PayAgencyConfig.EncryptionKey: 74e369bef4900fda92d7479ed223e480 # uses the production PAYAGENCY encryption key
               PayAgencyConfig.SecretKey: ${{ secrets.PROD_PAYAGENCY_SECRET_KEY }} # uses the production PAYAGENCY secret key
               PayAgencyConfig.Initiate: v1/live/card # uses the production PAYAGENCY initiate endpoint
               PayAgencyConfig.Status: live/status/{id} # uses the production PAYAGENCY status endpoint
-              PayAgencyConfig.MerchantEncryptionKey: ${{ secrets.PROD_PAYAGENCY_MERCHANT_ENCRYPTION_KEY }} # uses the production merchant encryption key
+              PayAgencyConfig.MerchantEncryptionKey: 2542b322a40ada01489c5491fe379512 # uses the production merchant encryption key
               PayAgencyConfig.IPAddress: 207.180.196.233 # uses the production IP Address
 
         - name: Build the Docker image
