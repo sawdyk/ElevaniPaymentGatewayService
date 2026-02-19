@@ -30,7 +30,7 @@ jobs:
               PayAgencyConfig.SecretKey: ${{ secrets.PROD_PAYAGENCY_SECRET_KEY }} # uses the production PAYAGENCY secret key
               PayAgencyConfig.Initiate: v1/live/card # uses the production PAYAGENCY initiate endpoint
               PayAgencyConfig.Status: live/status/{id} # uses the production PAYAGENCY status endpoint
-              PayAgencyConfig.MerchantEncryptionKey: 2542b322a40ada01489c5491fe379512 # uses the production merchant encryption key
+              PayAgencyConfig.MerchantEncryptionKey: ${{ secrets.PROD_PAYAGENCY_MERCHANT_ENCRYPTION_KEY }} # uses the production merchant encryption key
               PayAgencyConfig.IPAddress: 207.180.196.233 # uses the production IP Address
     
         - name: Build the Docker image
@@ -86,7 +86,7 @@ jobs:
               PayAgencyConfig.SecretKey: ${{ secrets.PROD_PAYAGENCY_SECRET_KEY }} # uses the production PAYAGENCY secret key
               PayAgencyConfig.Initiate: v1/live/card # uses the production PAYAGENCY initiate endpoint
               PayAgencyConfig.Status: live/status/{id} # uses the production PAYAGENCY status endpoint
-              PayAgencyConfig.MerchantEncryptionKey: 2542b322a40ada01489c5491fe379512 # uses the production merchant encryption key
+              PayAgencyConfig.MerchantEncryptionKey: ${{ secrets.PROD_PAYAGENCY_MERCHANT_ENCRYPTION_KEY }} # uses the production merchant encryption key
               PayAgencyConfig.IPAddress: 207.180.196.233 # uses the production IP Address
     
         - name: Build the Docker image
@@ -179,7 +179,7 @@ jobs:
               PayAgencyConfig.SecretKey: ${{ secrets.PROD_PAYAGENCY_SECRET_KEY }} # uses the production PAYAGENCY secret key
               PayAgencyConfig.Initiate: v1/live/card # uses the production PAYAGENCY initiate endpoint
               PayAgencyConfig.Status: live/status/{id} # uses the production PAYAGENCY status endpoint
-              PayAgencyConfig.MerchantEncryptionKey: 2542b322a40ada01489c5491fe379512 # uses the production merchant encryption key
+              PayAgencyConfig.MerchantEncryptionKey: ${{ secrets.PROD_PAYAGENCY_MERCHANT_ENCRYPTION_KEY }} # uses the production merchant encryption key
               PayAgencyConfig.IPAddress: 207.180.196.233 # uses the production IP Address
 
         - name: Build the Docker image
