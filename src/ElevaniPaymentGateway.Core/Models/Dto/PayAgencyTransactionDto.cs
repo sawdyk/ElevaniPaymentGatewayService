@@ -19,6 +19,7 @@ namespace ElevaniPaymentGateway.Core.Models.Dto
         public string? PhoneNumber { get; set; }
         public decimal Amount { get; set; }
         public string? Description { get; set; } //Narration
+        public string TransactionReference { get; set; } //pay agency transaction reference - transaction_id
         public string Currency { get; set; }
         public string CardNumber { get; set; }
         public string? CardExpiryMonth { get; set; }
@@ -27,6 +28,7 @@ namespace ElevaniPaymentGateway.Core.Models.Dto
         public string RedirectUrl { get; set; }
         public string? OTPRedirectUrl { get; set; }
         public string? WebHookUrl { get; set; }
+        public string? Message { get; set; }
 
         public bool IsVerified { get; set; } = false;
         public DateTime? DateVerified { get; set; } // date transaction was verified
