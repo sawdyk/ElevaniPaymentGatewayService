@@ -23,14 +23,14 @@ namespace ElevaniPaymentGateway.API.Transaction.Controllers
         }
 
         [HttpPost("encrypt")]
-        public async Task<IActionResult> EncryptData(string request)
+        public async Task<IActionResult> EncryptData(string request, string key)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest();
             }
 
-            var encryptedData = PayAgencyEncryptionService.EncryptData(request, "2542b322a40ada01489c5491fe379512");
+            var encryptedData = PayAgencyEncryptionService.EncryptData(request, key);
 
             logger.LogInformation($"encrypted data >>> {encryptedData}");
 
@@ -38,14 +38,14 @@ namespace ElevaniPaymentGateway.API.Transaction.Controllers
         }
 
         [HttpPost("decrypt")]
-        public async Task<IActionResult> DecryptData(string request)
+        public async Task<IActionResult> DecryptData(string request, string key)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest();
             }
 
-            var encryptedData = PayAgencyEncryptionService.DecryptData(request, "2542b322a40ada01489c5491fe379512");
+            var encryptedData = PayAgencyEncryptionService.DecryptData(request, key);
 
             logger.LogInformation($"decrypted data >>> {encryptedData}");
 
