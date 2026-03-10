@@ -1,16 +1,11 @@
 ﻿using Asp.Versioning;
 using ElevaniPaymentGateway.Core.Constants;
 using ElevaniPaymentGateway.Core.Exceptions;
-using ElevaniPaymentGateway.Core.Models.Response;
-using ElevaniPaymentGateway.Core.Models.Response.TransactionService;
-using ElevaniPaymentGateway.Infrastructure.Implementations.Services.PaymentGateway.Gratip;
 using ElevaniPaymentGateway.Infrastructure.Interfaces.Services.PaymentGateway.Gratip;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Primitives;
-using Newtonsoft.Json;
 using Swashbuckle.AspNetCore.Annotations;
 using System.Net;
-using System.Text.Json;
 
 namespace ElevaniPaymentGateway.API.Transaction.Controllers
 {
@@ -40,11 +35,17 @@ namespace ElevaniPaymentGateway.API.Transaction.Controllers
                 var payload = await new StreamReader(HttpContext.Request.Body).ReadToEndAsync();
                 _logger.LogInformation($"Webhook payload: {payload}");
 
+                if(string.IsNullOrEmpty(payload))
+                    throw new GenericException("Webhook request body is empty");
+
                 //request headers
                 var headers = HttpContext.Request.Headers; 
                 StringValues headerAuthorizedSignature;
                 var headerAuthSignature = headers.TryGetValue("x-gratip-signature", out headerAuthorizedSignature);
                 var signature = headerAuthorizedSignature.FirstOrDefault();
+
+                if (string.IsNullOrEmpty(signature))
+                    throw new GenericException("No x-gratip-signature found in the request header");
 
                 _logger.LogInformation($"Webhook signature: {signature}");
                 _logger.LogInformation($"Attempting to verify webhook signature......");
@@ -52,7 +53,7 @@ namespace ElevaniPaymentGateway.API.Transaction.Controllers
                 if (!await _gratipWebhookService.VerifyWebhookSignature(payload, signature))
                 {
                     _logger.LogError($"Invalid webhook signature");
-                    return new HttpResponseMessage(HttpStatusCode.BadRequest); //returns 400 
+                    throw new GenericException("$Invalid webhook signature");
                 }
 
                 _logger.LogInformation($"Valid webhook signature");
@@ -61,10 +62,15 @@ namespace ElevaniPaymentGateway.API.Transaction.Controllers
                 return new HttpResponseMessage(HttpStatusCode.OK); //returns 200 
             }
             catch (Exception ex)
+            when (ex is GenericException)
+            {
+                throw;
+            }
+            catch (Exception ex)
             {
                 _logger.LogError($"An error occured while trying to handle Gratip webhook notification >> " +
                     $"{ex.Message} | stack trace >> {ex.StackTrace} | inner exception >> {ex.InnerException} | source >> {ex.Source}");
-                return new HttpResponseMessage(HttpStatusCode.InternalServerError); //returns 500
+                throw new UnhandledException(RespMsgConstants.UnhandledException);
             }
         }
     }
