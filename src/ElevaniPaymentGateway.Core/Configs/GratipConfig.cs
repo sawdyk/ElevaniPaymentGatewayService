@@ -6,6 +6,7 @@
         public string? APIKey { get; set; }
         public string? APISecret { get; set; }
         public string? RotateCredential { get; set; }
+        public string? WebhookSecret { get; set; }
         public TransactionsConfig? TransactionsConfig { get; set; }
     }
 
