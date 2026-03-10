@@ -37,7 +37,7 @@ namespace ElevaniPaymentGateway.API.Transaction.Controllers
                     = ((sender, certificate, chain, sslPolicyErrors) => true);
 
                 //the incoming event from gratip
-                var payload = new StreamReader(HttpContext.Request.Body).ReadToEnd();
+                var payload = await new StreamReader(HttpContext.Request.Body).ReadToEndAsync();
                 _logger.LogInformation($"Webhook payload: {payload}");
 
                 //request headers
