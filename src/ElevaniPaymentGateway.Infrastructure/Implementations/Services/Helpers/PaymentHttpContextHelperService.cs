@@ -27,6 +27,7 @@ namespace ElevaniPaymentGateway.Infrastructure.Implementations.Services.Helpers
                 var name = _httpContextAccessor.HttpContext?.User.Claims.Where(x => x.Type == PaymentClaimTypesHelpers.Name).FirstOrDefault()?.Value ?? "";
                 var slug = _httpContextAccessor.HttpContext?.User.Claims.Where(x => x.Type == PaymentClaimTypesHelpers.Slug).FirstOrDefault()?.Value ?? "";
                 var paymentGateway = _httpContextAccessor.HttpContext?.User.Claims.Where(x => x.Type == PaymentClaimTypesHelpers.PaymentGateway).FirstOrDefault()?.Value ?? "";
+                var ipAddress = _httpContextAccessor.HttpContext?.Connection.RemoteIpAddress?.ToString();
 
                 var userResult = new MerchantContextDto
                 {
@@ -34,6 +35,7 @@ namespace ElevaniPaymentGateway.Infrastructure.Implementations.Services.Helpers
                     Name = name,
                     Slug = slug,
                     PaymentGateway = paymentGateway,
+                    IPAddress = ipAddress
                 };
 
                 return userResult;

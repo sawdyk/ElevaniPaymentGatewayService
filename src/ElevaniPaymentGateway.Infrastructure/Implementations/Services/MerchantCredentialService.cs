@@ -37,8 +37,13 @@ namespace ElevaniPaymentGateway.Infrastructure.Implementations.Services
         {
             try
             {
-               var merchantCredential = await _merchantCredentialQuery.GetByAsync(x => x.APIKey ==  request.APIKey && x.APISecret == request.APISecret, true);
-                if(merchantCredential is null) throw new GenericException("Invalid credentials");
+                var merchantCredential = await _merchantCredentialQuery.GetByAsync(x => x.APIKey == request.APIKey && x.APISecret == request.APISecret, true);
+                if (merchantCredential is null) throw new GenericException("Invalid credentials");
+
+                var merchant = await _merchantQuery.GetByAsync(x => x.Id == merchantCredential.MerchantId);
+                if (merchant is null) throw new NotFoundException("Merchant account does not exist");
+                if (!merchant.IsActive) throw new GenericException("Merchant account is inactive");
+
                 if (DateTime.Now > merchantCredential.ExpiryDate) throw new GenericException("Expired credentials. Kindly generate new credentials");
 
                 var jwtResponse = await _jwtUtilityService.GenerateMerchantAuthenticationAccessToken(merchantCredential.Merchant);
@@ -62,15 +67,16 @@ namespace ElevaniPaymentGateway.Infrastructure.Implementations.Services
             try
             {
                 var merchant = await _merchantQuery.GetByAsync(x => x.Id == request.MerchantId);
-                if (merchant is null) throw new NotFoundException("Merchant does not exist");
+                if (merchant is null) throw new NotFoundException("Merchant account does not exist");
+                if (!merchant.IsActive) throw new GenericException("Merchant account is inactive");
 
                 var merchantCredential = await _merchantCredentialQuery.GetByAsync(x => x.MerchantId == request.MerchantId);
                 if (merchantCredential is null) throw new NotFoundException("Merchant credential does not exist");
 
                 merchantCredential.MerchantId = request.MerchantId;
-                merchantCredential.APIKey = $"sk_{Guid.NewGuid().ToString().Replace("-", "").ToLower()}";
+                merchantCredential.APIKey = $"{Guid.NewGuid().ToString().Replace("-", "").ToLower()}";
                 merchantCredential.APISecret = Guid.NewGuid().ToString().ToLower();
-                merchantCredential.ExpiryDate = DateTime.Now.AddMonths(_appSettingsConfig.MerchantCredentialExpiration);
+                merchantCredential.ExpiryDate = DateTime.Now.AddYears(_appSettingsConfig.MerchantCredentialExpiration);
 
                 _merchantCredentialRepository.Update(merchantCredential);
                 await _merchantCredentialRepository.SaveChangesAsync();

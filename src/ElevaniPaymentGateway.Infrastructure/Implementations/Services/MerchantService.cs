@@ -153,5 +153,34 @@ namespace ElevaniPaymentGateway.Infrastructure.Implementations.Services
                 throw new UnhandledException(RespMsgConstants.UnhandledException);
             }
         }
+
+        public async Task<GenericResponse<Merchant>> SetStatusAsync(string id, bool isActive)
+        {
+            try
+            {
+                var merchant = await _merchantQuery.GetByAsync(x => x.Id == id, true);
+                if (merchant is null) throw new NotFoundException("Merchant does not exist");
+
+                merchant.IsActive = isActive;
+                merchant.UpdatedBy = _userContext.UserId.ToString();
+                merchant.UpdatedAt = DateTime.Now;
+
+                _merchantRepository.Update(merchant);
+                await _merchantRepository.SaveChangesAsync();
+
+                return GenericResponse<Merchant>.Success(merchant);
+            }
+            catch (Exception ex)
+            when (ex is NotFoundException)
+            {
+                throw;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Error encountered while trying to update merchant status - {ex.Message}" +
+                    $"| stack trace >> {ex.StackTrace} | inner exception >> {ex.InnerException} | source >> {ex.Source}");
+                throw new UnhandledException(RespMsgConstants.UnhandledException);
+            }
+        }
     }
 }

@@ -38,6 +38,8 @@ namespace ElevaniPaymentGateway.Persistence.Configurations
 
             builder.Property(entity => entity.IPAddress).IsRequired(false).HasMaxLength(100);
 
+            builder.Property(entity => entity.MerchantIPAddress).IsRequired(false).HasMaxLength(100);
+
             builder.Property(entity => entity.CardNumber).IsRequired(false).HasMaxLength(100);
 
             builder.Property(entity => entity.CardExpiryMonth).IsRequired(false).HasMaxLength(50);
