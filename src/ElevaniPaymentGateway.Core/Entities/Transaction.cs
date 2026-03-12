@@ -22,6 +22,7 @@ namespace ElevaniPaymentGateway.Core.Entities
         public string? State { get; set; }
         public string? Zip { get; set; }
         public string? IPAddress { get; set; }
+        public string? MerchantIPAddress { get; set; }
         public string? CardNumber { get; set; }
         public string? CardExpiryMonth { get; set; }
         public string? CardExpiryYear { get; set; }

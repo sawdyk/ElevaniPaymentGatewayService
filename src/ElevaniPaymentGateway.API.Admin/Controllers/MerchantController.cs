@@ -87,5 +87,21 @@ namespace ElevaniPaymentGateway.MerchantAPI.Controllers
             var response = await _merchantCredentialService.GenerateCredentialsAsync(request);
             return Ok(response);
         }
+
+        [HttpPut("status/{id}/{isActive}")]
+        [SwaggerOperation("Update merchant status - Activate or deactivate merchants")]
+        [SwaggerResponse(StatusCodes.Status200OK, "Success", typeof(GenericResponse<Merchant>))]
+        [SwaggerResponse(StatusCodes.Status400BadRequest, "Failed", typeof(ProblemDetails))]
+        [SwaggerResponse(StatusCodes.Status500InternalServerError, "Internal server error", typeof(ProblemDetails))]
+        public async Task<IActionResult> SetStatusAsync(string id, bool isActive)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest();
+            }
+
+            var response = await _merchantService.SetStatusAsync(id, isActive);
+            return Ok(response);
+        }
     }
 }

@@ -52,6 +52,7 @@ namespace ElevaniPaymentGateway.Infrastructure.Implementations.Services
                 transaction.State = request.State;
                 transaction.Zip = request.Zip;
                 transaction.IPAddress = _payAgencyConfig.IPAddress;
+                transaction.MerchantIPAddress = _merchantContext.IPAddress;
                 transaction.CardNumber = $"{request.CardNumber.Substring(0, 6)}**********";
                 transaction.CardExpiryMonth = "**"; //request.CardExpiryMonth;
                 transaction.CardExpiryYear = "****"; //request.CardExpiryYear;
@@ -90,6 +91,8 @@ namespace ElevaniPaymentGateway.Infrastructure.Implementations.Services
                 transaction.LastName = "";
                 transaction.Email = "";
                 transaction.PhoneNumber = "";
+                transaction.IPAddress = _payAgencyConfig.IPAddress;
+                transaction.MerchantIPAddress = _merchantContext.IPAddress;
                 transaction.PaymentGateway = PaymentGateways.GRATIP;
                 transaction.Status = TransactionStatus.Pending;
                 transaction.CreatedBy = "System";

@@ -26,6 +26,8 @@ namespace ElevaniPaymentGateway.Persistence.Configurations
 
             builder.Property(entity => entity.PaymentGateway).IsRequired().HasConversion<string>();
 
+            builder.Property(entity => entity.IsActive).IsRequired().HasDefaultValue(true);
+
             builder.Property(entity => entity.CreatedAt).IsRequired().HasDefaultValue(DateTime.Now);
 
 

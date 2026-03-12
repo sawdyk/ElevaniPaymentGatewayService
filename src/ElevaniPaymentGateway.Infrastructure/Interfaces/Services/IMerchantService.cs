@@ -11,5 +11,6 @@ namespace ElevaniPaymentGateway.Infrastructure.Interfaces.Services
         Task<GenericResponse<Merchant>> CreateAsync(MerchantRequest request);
         Task<GenericPagedResponse<Merchant>> MerchantsAsync(PaginationParams paginationParams);
         Task<GenericResponse<Merchant>> IdAsync(string id);
+        Task<GenericResponse<Merchant>> SetStatusAsync(string id, bool isActive);
     }
 }

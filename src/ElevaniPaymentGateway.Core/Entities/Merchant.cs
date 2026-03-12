@@ -17,6 +17,7 @@ namespace ElevaniPaymentGateway.Core.Entities
         public string? PhoneNumber { get; set; }
         public string? EmailAddress { get; set; }
         public PaymentGateways PaymentGateway { get; set; }
+        public bool IsActive { get; set; } = true;
         public string? CreatedBy { get; set; }
         public DateTime CreatedAt { get; set; } = DateTime.Now;
         public string? UpdatedBy { get; set; }
